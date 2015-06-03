@@ -1,5 +1,9 @@
 package rc.championship.api.services;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.concurrent.TimeUnit;
+
 /**
  *
  * @author Stefan
@@ -11,5 +15,7 @@ public interface TrackConnector {
     boolean isConnected();
     boolean isStarted();
     void register(ConnectorListener listener);
-    void deregister(ConnectorListener listener);
+    void unregister(ConnectorListener listener);
+    ByteBuffer readMessage(int timeout, TimeUnit timeUnit) throws InterruptedException;
+    boolean sendMessage(ByteBuffer response, int timeout, TimeUnit timeUnit)throws IOException, InterruptedException;
 }

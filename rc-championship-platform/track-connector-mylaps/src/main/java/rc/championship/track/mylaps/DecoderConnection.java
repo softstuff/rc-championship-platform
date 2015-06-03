@@ -45,6 +45,16 @@ public class DecoderConnection {
         this.incoming = new ArrayBlockingQueue<>(MAX_NO_OF_MSG_IN_CACHE);
     }
 
+    public BlockingQueue<ByteBuffer> getOutgoing() {
+        return outgoing;
+    }
+
+    public BlockingQueue<ByteBuffer> getIncoming() {
+        return incoming;
+    }
+
+    
+    
     public void setConnectionTrigger(ConnectionTrigger connectionTrigger) {
         this.connectionTrigger = connectionTrigger;
     }

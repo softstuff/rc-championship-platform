@@ -1,9 +1,8 @@
 package rc.championship.track.mylaps;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.nio.ByteBuffer;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -11,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.windows.IOProvider;
-import rc.championship.api.model.Transponder;
 import rc.championship.api.services.ConnectorListener;
 import rc.championship.api.services.TrackConnector;
 
@@ -23,13 +21,21 @@ public class MylapsTrackConnector implements TrackConnector {
     private ScheduledExecutorService executor;
     
     private final Set<ConnectorListener> clients;
-    private List<Transponder> transponders;
     private boolean started;
-    private boolean connected;
 
     private DecoderConnection connection;
+    private DecoderLogicEngine logicEngine;
     private String host = "localhost";
     private int port = 5403;
+
+    @Override
+    public ByteBuffer readMessage(int timeout, TimeUnit timeUnit) throws InterruptedException {
+        return connection.read(timeout, timeUnit);
+    }
+
+    public boolean sendMessage(ByteBuffer msg, int timeout, TimeUnit timeUnit) throws IOException, InterruptedException {
+        return connection.send(msg, timeout, timeUnit);
+    }
     
     private class KeepAliveWatch implements Runnable {
 
@@ -52,7 +58,6 @@ public class MylapsTrackConnector implements TrackConnector {
         this.host = host;
         this.port = port;
         clients = new HashSet<>();
-        transponders = new ArrayList<>();
     }
 
 
@@ -67,7 +72,7 @@ public class MylapsTrackConnector implements TrackConnector {
     }
 
     @Override
-    public void deregister(ConnectorListener listener) {
+    public void unregister(ConnectorListener listener) {
         clients.remove(listener);
     }
     
@@ -88,6 +93,8 @@ public class MylapsTrackConnector implements TrackConnector {
             
             executor.scheduleAtFixedRate(new KeepAliveWatch(), KEEP_ALIVE_INTERVALL, KEEP_ALIVE_INTERVALL, TimeUnit.SECONDS);
 
+            logicEngine = new DecoderLogicEngine(this);
+            executor.execute(logicEngine);
             
             logToOutput("Connected to %s:%d", host, port);
             LOG.fine("start begin");
@@ -148,7 +155,7 @@ public class MylapsTrackConnector implements TrackConnector {
     public boolean isStarted() {
         return started;
     }
-    
+        
     private void logToOutput(String format, Object ... args){
         IOProvider.getDefault().getIO("MyLaps decoder connection", false).getOut().format(format, args);
     }
