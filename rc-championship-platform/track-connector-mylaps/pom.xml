@@ -72,6 +72,11 @@
             <artifactId>org-openide-io</artifactId>
             <version>RELEASE80</version>
         </dependency>
+        <dependency>
+            <groupId>eu.plib</groupId>
+            <artifactId>plib</artifactId>
+            <version>1.2</version>
+        </dependency>
     </dependencies>
     <name>track-connector-mylaps</name>
 </project>
