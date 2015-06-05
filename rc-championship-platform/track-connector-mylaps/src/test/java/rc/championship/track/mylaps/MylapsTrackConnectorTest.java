@@ -11,7 +11,7 @@ import rc.championship.api.model.Lap;
 import rc.championship.api.services.ConnectorListener;
 import rc.championship.api.services.TrackConnector;
 import rc.championship.mylaps.emulator.ClientConnection;
-import rc.championship.mylaps.emulator.P4DecoderEmulator;
+import rc.championship.mylaps.emulator.P3DecoderEmulator;
 import rc.championship.mylaps.emulator.TransferListener;
 
 /**
@@ -33,7 +33,7 @@ public class MylapsTrackConnectorTest {
     @Ignore
     public void testProtocol() throws IOException, InterruptedException{
         
-        P4DecoderEmulator emulator = new P4DecoderEmulator();
+        P3DecoderEmulator emulator = new P3DecoderEmulator();
         emulator.registerListener(new TransferListener() {
 
             @Override

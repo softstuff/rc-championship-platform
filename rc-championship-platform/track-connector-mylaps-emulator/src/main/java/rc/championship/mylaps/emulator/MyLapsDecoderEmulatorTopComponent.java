@@ -69,7 +69,7 @@ public final class MyLapsDecoderEmulatorTopComponent extends TopComponent implem
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        emulator = new rc.championship.mylaps.emulator.P4DecoderEmulator();
+        emulator = new P3DecoderEmulator();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabelHost = new javax.swing.JLabel();
@@ -134,7 +134,7 @@ public final class MyLapsDecoderEmulatorTopComponent extends TopComponent implem
     }// </editor-fold>//GEN-END:initComponents
 
     private void startStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed
-        
+
         if(emulator.isRunning()){
             emulator.stop();
             startStopButton.setText( NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.startStopButton.running.text") );
@@ -151,7 +151,7 @@ public final class MyLapsDecoderEmulatorTopComponent extends TopComponent implem
     }//GEN-LAST:event_startStopButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private rc.championship.mylaps.emulator.P4DecoderEmulator emulator;
+    private P3DecoderEmulator emulator;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;

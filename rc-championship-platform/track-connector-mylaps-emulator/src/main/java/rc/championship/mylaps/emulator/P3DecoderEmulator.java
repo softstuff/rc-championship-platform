@@ -20,8 +20,8 @@ import org.apache.commons.io.IOUtils;
  *
  * @author Stefan
  */
-public class P4DecoderEmulator {
-    private static final Logger LOG = Logger.getLogger(P4DecoderEmulator.class.getName());
+public class P3DecoderEmulator {
+    private static final Logger LOG = Logger.getLogger(P3DecoderEmulator.class.getName());
     
     private final Executor executor = Executors.newCachedThreadPool();
     private ClientListenerService clientListenerService;

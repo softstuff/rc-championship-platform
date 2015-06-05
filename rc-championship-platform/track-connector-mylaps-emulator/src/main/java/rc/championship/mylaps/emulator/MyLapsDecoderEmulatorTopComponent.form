@@ -2,7 +2,7 @@
 
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
-    <Component class="rc.championship.mylaps.emulator.P4DecoderEmulator" name="emulator">
+    <Component class="rc.championship.mylaps.emulator.P3DecoderEmulator" name="emulator">
     </Component>
   </NonVisualComponents>
   <AuxValues>

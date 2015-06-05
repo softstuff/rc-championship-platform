@@ -1,0 +1,7 @@
+// data for the simulator
+// some numbers will be auto adjusted: passing number - autoincrease
+// make sure it matches the configuration data, like decoderId
+delay: 1400
+{"passingNumber":"3125","transponder":"95B15B","RTC_Time":"0","strength":"24","hits":"1B","flags":"1","recordType":"Passing","TOR":"1","crcOk":true,"unknownFields":{},"emptyFields":{},"VERSION":"2","SPARE":"3300","FLAGS":"0000","decoderId":"750E0400"}
+delay: 1100
+{"passingNumber":"3126","transponder":"95B15B","RTC_Time":"0","strength":"1C","hits":"5","flags":"1","recordType":"Passing","TOR":"1","crcOk":true,"unknownFields":{},"emptyFields":{},"VERSION":"2","SPARE":"3300","FLAGS":"0000","decoderId":"750E0400"}
