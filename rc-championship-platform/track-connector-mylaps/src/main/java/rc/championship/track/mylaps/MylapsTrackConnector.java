@@ -33,6 +33,7 @@ public class MylapsTrackConnector implements TrackConnector {
         return connection.read(timeout, timeUnit);
     }
 
+    @Override
     public boolean sendMessage(ByteBuffer msg, int timeout, TimeUnit timeUnit) throws IOException, InterruptedException {
         return connection.send(msg, timeout, timeUnit);
     }
@@ -134,13 +135,11 @@ public class MylapsTrackConnector implements TrackConnector {
     private static final int KEEP_ALIVE_INTERVALL = 30;
 
     @Override
-    public void stop() throws InterruptedException {
+    public void stop() {
         if (started) {
             logToOutput("stop");
             started = false;
             connection.disconnect("Stopping track connector");
-            executor.shutdown();
-            executor.awaitTermination(KEEP_ALIVE_INTERVALL, TimeUnit.SECONDS);
             executor.shutdownNow();
 
         }

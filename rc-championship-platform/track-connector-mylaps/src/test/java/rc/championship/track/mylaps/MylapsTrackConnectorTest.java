@@ -60,7 +60,7 @@ public class MylapsTrackConnectorTest {
             }
         });
         
-        emulator.start(23432);
+        emulator.start("localhost",23432);
         
         MylapsTrackConnector track = new MylapsTrackConnector("localhost", 23432);
         track.register(new ConnectorListener() {

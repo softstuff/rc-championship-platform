@@ -1,6 +1,9 @@
 package rc.championship.practies;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collection;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import rc.championship.api.services.TrackConnector;
 import rc.championship.api.services.TrackConnectorFactory;
@@ -15,11 +18,22 @@ public class PractiesPresentationModel {
     private TrackConnector connector;
 
     public PractiesPresentationModel() {
-        host = "localhost";
-        port = "23432";
+        host = getHostName();
+        port = "5403";
         Collection<? extends TrackConnectorFactory> allTrackConnectorFactories = getAllTrackConnectorFactories();
         if(allTrackConnectorFactories != null && allTrackConnectorFactories.size() == 1){
             selectedFactory = allTrackConnectorFactories.iterator().next();
+        }
+    }
+    
+    
+    private String getHostName() {
+        try {
+            InetAddress addr = InetAddress.getLocalHost();
+            return addr.getHostName();
+        } catch (UnknownHostException ex) {
+            Exceptions.printStackTrace(ex);
+            return "localhost";
         }
     }
     

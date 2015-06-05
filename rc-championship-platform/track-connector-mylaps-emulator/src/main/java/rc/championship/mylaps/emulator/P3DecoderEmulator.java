@@ -1,5 +1,6 @@
 package rc.championship.mylaps.emulator;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -12,21 +13,24 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.io.IOUtils;
+import rc.championship.api.util.NbLogger;
 
 /**
  *
  * @author Stefan
  */
 public class P3DecoderEmulator {
-    private static final Logger LOG = Logger.getLogger(P3DecoderEmulator.class.getName());
+    
+    private static final NbLogger LOG = NbLogger.getEmulatorLogger(P3DecoderEmulator.class);
     
     private final Executor executor = Executors.newCachedThreadPool();
     private ClientListenerService clientListenerService;
     private final List<TransferListener> transferListeners = new CopyOnWriteArrayList<>();
     private final List<ClientConnection> clients = new CopyOnWriteArrayList<>();
+    private boolean paused;
+    private File emulatorFile;
     
     public void registerListener(TransferListener transferListener) {
         if(!transferListeners.contains(transferListener)){
@@ -40,14 +44,14 @@ public class P3DecoderEmulator {
         LOG.log(Level.FINER, "unregisterListener {0}", transferListener);
     }
         
-    public void start(int port) throws IOException{
+    public void start(String hostname, int port) throws IOException{
         if(clientListenerService!=null) {
             throw new IllegalStateException("server is already running");
         }
         LOG.log(Level.FINER, "start");
         
         clientListenerService = new ClientListenerService();
-        clientListenerService.start(port);
+        clientListenerService.start(hostname, port);
         executor.execute(clientListenerService);
         
     }
@@ -59,6 +63,38 @@ public class P3DecoderEmulator {
     void stop() {
         clientListenerService.stop();
         clientListenerService = null;
+    }
+
+    void play(File file) {
+        LOG.log(Level.FINE, "play %s", file.getAbsoluteFile());
+        this.emulatorFile = file;
+        ///TODO start playing file
+    }
+
+    boolean isPlaying() {
+        return emulatorFile != null;
+    }
+
+    void stopPlaying() {
+        LOG.log(Level.FINE, "stopPlaying %s", emulatorFile.getAbsoluteFile());
+        ///TODO stop playing file
+        emulatorFile = null;
+    }
+
+    boolean isPaused() {
+        return isPlaying() && paused;
+    }
+
+    void resume() {
+        LOG.log(Level.FINE, "resume playing %s", emulatorFile.getAbsoluteFile());
+        ///TODO stop pausing play file
+        paused = false;
+    }
+
+    void pause() {
+        LOG.log(Level.FINE, "pause playing %s", emulatorFile.getAbsoluteFile());
+        ///TODO start pausing play file
+        paused = true;
     }
     
     private class ClientConnectionImpl implements Runnable, ClientConnection {
@@ -132,14 +168,16 @@ public class P3DecoderEmulator {
                 }
                 LOG.log(Level.FINER, "client listener thread has stopped");
             } catch (Exception ex) {
-                LOG.log(Level.SEVERE, "client listener stopped cause exeption", ex);
+                if(clientListenerService != null && clientListenerService.isRunning()){
+                    LOG.log(Level.SEVERE, "client listener stopped cause exeption", ex);
+                }
             } 
         }
         
-        void start(int serverPort) throws IOException{
+        void start(String hostname, int serverPort) throws IOException{
             LOG.log(Level.FINER, "start listen for client on port {0}", serverPort);
             serverSocketChannel = ServerSocketChannel.open();
-            serverSocketChannel.socket().bind(new InetSocketAddress("127.0.0.1", serverPort));
+            serverSocketChannel.socket().bind(new InetSocketAddress(hostname, serverPort));
 //            serverSocketChannel.socket().bind(new InetSocketAddress("192.168.1.201", serverPort));
         }
         

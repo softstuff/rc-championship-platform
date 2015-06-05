@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 public interface TrackConnector {
     String getConnectorName();
     void start();
-    void stop() throws InterruptedException;
+    void stop();
     boolean isConnected();
     boolean isStarted();
     void register(ConnectorListener listener);

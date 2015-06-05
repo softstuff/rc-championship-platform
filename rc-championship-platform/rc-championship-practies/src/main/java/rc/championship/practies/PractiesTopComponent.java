@@ -4,7 +4,8 @@ import java.util.logging.Logger;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.util.NbBundle.Messages;
+import org.openide.util.NbBundle;
+import org.openide.windows.IOProvider;
 import org.openide.windows.TopComponent;
 import rc.championship.api.model.Lap;
 import rc.championship.api.services.ConnectorListener;
@@ -29,19 +30,14 @@ import rc.championship.api.services.TrackConnector;
         displayName = "#CTL_PractiesAction",
         preferredID = "PractiesTopComponent"
 )
-@Messages({
-    "CTL_PractiesAction=Practies",
-    "CTL_PractiesTopComponent=Practies Window",
-    "HINT_PractiesTopComponent=This is a Practies window"
-})
 public final class PractiesTopComponent extends TopComponent implements ConnectorListener {
 
     private Logger log = Logger.getLogger(getClass().getName());
     
     public PractiesTopComponent() {
         initComponents();
-        setName(Bundle.CTL_PractiesTopComponent());
-        setToolTipText(Bundle.HINT_PractiesTopComponent());
+        setName(NbBundle.getMessage(getClass(), "CTL_PractiesTopComponent"));
+        setToolTipText(NbBundle.getMessage(getClass(), "HINT_PractiesTopComponent"));
     }
 
     /**
@@ -61,7 +57,7 @@ public final class PractiesTopComponent extends TopComponent implements Connecto
         jLabel3 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        connectButton = new javax.swing.JButton();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(PractiesTopComponent.class, "PractiesTopComponent.jPanel1.border.title"))); // NOI18N
 
@@ -77,16 +73,20 @@ public final class PractiesTopComponent extends TopComponent implements Connecto
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(PractiesTopComponent.class, "PractiesTopComponent.jLabel3.text")); // NOI18N
 
+        jTextField1.setText(org.openide.util.NbBundle.getMessage(PractiesTopComponent.class, "PractiesTopComponent.jTextField1.text")); // NOI18N
+
         binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, presentationModel, org.jdesktop.beansbinding.ELProperty.create("${host}"), jTextField1, org.jdesktop.beansbinding.BeanProperty.create("text"));
         bindingGroup.addBinding(binding);
+
+        jTextField2.setToolTipText(org.openide.util.NbBundle.getMessage(PractiesTopComponent.class, "PractiesTopComponent.jTextField2.toolTipText")); // NOI18N
 
         binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, presentationModel, org.jdesktop.beansbinding.ELProperty.create("${port}"), jTextField2, org.jdesktop.beansbinding.BeanProperty.create("text"));
         bindingGroup.addBinding(binding);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(PractiesTopComponent.class, "PractiesTopComponent.jButton1.text")); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        org.openide.awt.Mnemonics.setLocalizedText(connectButton, org.openide.util.NbBundle.getMessage(PractiesTopComponent.class, "PractiesTopComponent.connectButton.text")); // NOI18N
+        connectButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                connectButtonActionPerformed(evt);
             }
         });
 
@@ -108,7 +108,7 @@ public final class PractiesTopComponent extends TopComponent implements Connecto
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
+                .addComponent(connectButton)
                 .addContainerGap(86, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -120,7 +120,7 @@ public final class PractiesTopComponent extends TopComponent implements Connecto
                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(jLabel1)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(jButton1))
+                .addComponent(connectButton))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -143,14 +143,26 @@ public final class PractiesTopComponent extends TopComponent implements Connecto
         bindingGroup.bind();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        TrackConnector connector = presentationModel.connect();
-        connector.register(this);
-        connector.start();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
+        
+        TrackConnector connector = presentationModel.getConnector();
+        if(connector == null || connector.isStarted()){
+            log("User cliced connect");
+            connector = presentationModel.connect();
+            connector.register(this);
+            connector.start();
+            org.openide.awt.Mnemonics.setLocalizedText(connectButton, org.openide.util.NbBundle.getMessage(PractiesTopComponent.class, "PractiesTopComponent.connectButton.disconnect.text")); // NOI18N
+        } else {
+            log("User cliced disconnect");
+            connector.stop();
+            connector.unregister(this);
+            org.openide.awt.Mnemonics.setLocalizedText(connectButton, org.openide.util.NbBundle.getMessage(PractiesTopComponent.class, "PractiesTopComponent.connectButton.text")); // NOI18N
+        
+        }
+    }//GEN-LAST:event_connectButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton connectButton;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -185,23 +197,29 @@ public final class PractiesTopComponent extends TopComponent implements Connecto
 
     @Override
     public void connected(TrackConnector source) {
-        log.info("connected");
+        log("connected");
     }
 
     @Override
     public void disconnected(TrackConnector source) {
-        log.info("disconnected");
+        log("disconnected");
     }
 
     @Override
     public void recorded(Lap lap, TrackConnector source) {
-        log.info("recorded "+lap);
+        log("recorded "+lap);
     }
 
     @Override
     public void started(TrackConnector source) {
-        log.info("started");        
+        log("started");        
     }
 
+    private void log(String format, Object ... args){
+        String msg = String.format(format, args);
+        IOProvider.getDefault().getIO("Practies", false).getOut().println(msg);
+        log.info(msg); 
+    }
+    
     
 }

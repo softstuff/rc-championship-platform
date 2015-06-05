@@ -1,8 +1,12 @@
 package rc.championship.mylaps.emulator;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -25,7 +29,7 @@ import org.openide.windows.TopComponent;
         //iconBase="SET/PATH/TO/ICON/HERE", 
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
-@TopComponent.Registration(mode = "editor", openAtStartup = false)
+@TopComponent.Registration(mode = "editor", openAtStartup = true)
 @ActionID(category = "Window", id = "rc.championship.mylaps.emulator.MyLapsDecoderEmulatorTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
@@ -33,8 +37,8 @@ import org.openide.windows.TopComponent;
         preferredID = "MyLapsDecoderEmulatorTopComponent"
 )
 @Messages({
-    "CTL_MyLapsDecoderEmulatorAction=MyLapsDecoderEmulator",
-    "CTL_MyLapsDecoderEmulatorTopComponent=MyLapsDecoderEmulator Window",
+    "CTL_MyLapsDecoderEmulatorAction=MyLaps Decoder Emulator",
+    "CTL_MyLapsDecoderEmulatorTopComponent=MyLaps Decoder Emulator Window",
     "HINT_MyLapsDecoderEmulatorTopComponent=This is a MyLapsDecoderEmulator window"
 })
 public final class MyLapsDecoderEmulatorTopComponent extends TopComponent implements TransferListener {
@@ -46,6 +50,7 @@ public final class MyLapsDecoderEmulatorTopComponent extends TopComponent implem
         setToolTipText(Bundle.HINT_MyLapsDecoderEmulatorTopComponent());
         emulator.registerListener((TransferListener)this);
         
+        jLabelHost.setText(getHostName());
         jTextFieldPort.setInputVerifier(new InputVerifier() {
 
             @Override
@@ -69,13 +74,19 @@ public final class MyLapsDecoderEmulatorTopComponent extends TopComponent implem
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        emulator = new P3DecoderEmulator();
+        emulator = new rc.championship.mylaps.emulator.P3DecoderEmulator();
+        fileChooser = new javax.swing.JFileChooser();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabelHost = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jTextFieldPort = new javax.swing.JTextField();
         startStopButton = new javax.swing.JButton();
+        playFileLabel = new javax.swing.JLabel();
+        playFileTextField = new javax.swing.JTextField();
+        playFileBrowseButton = new javax.swing.JButton();
+        playFilePlayButton = new javax.swing.JButton();
+        playFilePauseButton = new javax.swing.JButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.jLabel1.text")); // NOI18N
 
@@ -85,10 +96,35 @@ public final class MyLapsDecoderEmulatorTopComponent extends TopComponent implem
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.jLabel4.text")); // NOI18N
 
+        jTextFieldPort.setText("5403"); // NOI18N
+
         org.openide.awt.Mnemonics.setLocalizedText(startStopButton, org.openide.util.NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.startStopButton.text")); // NOI18N
         startStopButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 startStopButtonActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(playFileLabel, org.openide.util.NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.playFileLabel.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(playFileBrowseButton, org.openide.util.NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.playFileBrowseButton.text")); // NOI18N
+        playFileBrowseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playFileBrowseButtonActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(playFilePlayButton, org.openide.util.NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.playFilePlayButton.text")); // NOI18N
+        playFilePlayButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playFilePlayButtonActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(playFilePauseButton, org.openide.util.NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.playFilePauseButton.text")); // NOI18N
+        playFilePauseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playFilePauseButtonActionPerformed(evt);
             }
         });
 
@@ -99,64 +135,126 @@ public final class MyLapsDecoderEmulatorTopComponent extends TopComponent implem
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelHost, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(startStopButton)
-                                    .addComponent(jTextFieldPort, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabelHost, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextFieldPort, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(startStopButton))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(playFileLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(playFileTextField)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(playFileBrowseButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(playFilePlayButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(playFilePauseButton)
+                        .addGap(0, 148, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabelHost))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabelHost)))
                     .addComponent(jLabel4)
-                    .addComponent(jTextFieldPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(startStopButton)
-                .addContainerGap(30, Short.MAX_VALUE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTextFieldPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(startStopButton)))
+                .addGap(44, 44, 44)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(playFileLabel)
+                    .addComponent(playFileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(playFileBrowseButton)
+                    .addComponent(playFilePlayButton)
+                    .addComponent(playFilePauseButton))
+                .addContainerGap(359, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void startStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed
 
         if(emulator.isRunning()){
+            log("Click stop");
             emulator.stop();
-            startStopButton.setText( NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.startStopButton.running.text") );
+            startStopButton.setText( NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.startStopButton.text") );
         } else {
             try {
+                log("Click start");
                 String text = jTextFieldPort.getText();
                 int port = Integer.parseInt(text);
-                emulator.start(port);
-                startStopButton.setText( NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.startStopButton.text") );
+                String hostname = getHostName();
+                emulator.start(hostname, port);
+                startStopButton.setText( NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.startStopButton.running.text") );
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
     }//GEN-LAST:event_startStopButtonActionPerformed
 
+    private void playFileBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playFileBrowseButtonActionPerformed
+        int returnVal = fileChooser.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            playFileTextField.setText(file.getAbsolutePath() );            
+        } else {
+            log("File access cancelled by user.");
+        }
+        
+    }//GEN-LAST:event_playFileBrowseButtonActionPerformed
+
+    private void playFilePlayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playFilePlayButtonActionPerformed
+        
+        File file = new File(playFileTextField.getText());
+        emulator.play(file);
+        
+    }//GEN-LAST:event_playFilePlayButtonActionPerformed
+
+    private void playFilePauseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playFilePauseButtonActionPerformed
+        
+        if(emulator.isPlaying()){
+            if(emulator.isPaused()){
+                emulator.resume();
+                org.openide.awt.Mnemonics.setLocalizedText(playFilePauseButton, org.openide.util.NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.playFilePauseButton.text")); // NOI18N
+        
+            } else {
+                emulator.pause();
+                org.openide.awt.Mnemonics.setLocalizedText(playFilePauseButton, org.openide.util.NbBundle.getMessage(MyLapsDecoderEmulatorTopComponent.class, "MyLapsDecoderEmulatorTopComponent.playFilePauseButton.resume.text")); // NOI18N
+        
+            }
+        } else {
+            log("ignore pause request, emulator is not playing");
+        }
+    }//GEN-LAST:event_playFilePauseButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private P3DecoderEmulator emulator;
+    private rc.championship.mylaps.emulator.P3DecoderEmulator emulator;
+    private javax.swing.JFileChooser fileChooser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabelHost;
     private javax.swing.JTextField jTextFieldPort;
+    private javax.swing.JButton playFileBrowseButton;
+    private javax.swing.JLabel playFileLabel;
+    private javax.swing.JButton playFilePauseButton;
+    private javax.swing.JButton playFilePlayButton;
+    private javax.swing.JTextField playFileTextField;
     private javax.swing.JButton startStopButton;
     // End of variables declaration//GEN-END:variables
     @Override
@@ -202,6 +300,18 @@ public final class MyLapsDecoderEmulatorTopComponent extends TopComponent implem
     }
 
     private void log(String format, Object ... args){
-        IOProvider.getDefault().getIO("MyLaps emulator", false).getOut().format(format, args);
+        String msg = String.format(format, args);
+        IOProvider.getDefault().getIO("MyLaps emulator", false).getOut().println(msg);
+        
+    }
+
+    private String getHostName() {
+        try {
+            InetAddress addr = InetAddress.getLocalHost();
+            return addr.getHostName();
+        } catch (UnknownHostException ex) {
+            Exceptions.printStackTrace(ex);
+            return "localhost";
+        }
     }
 }
