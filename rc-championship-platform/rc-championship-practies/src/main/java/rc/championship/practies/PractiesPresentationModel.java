@@ -5,8 +5,8 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
-import rc.championship.api.services.TrackConnector;
-import rc.championship.api.services.TrackConnectorFactory;
+import rc.championship.api.services.decoder.TrackConnector;
+import rc.championship.api.services.decoder.TrackConnectorFactory;
 
 
 public class PractiesPresentationModel {

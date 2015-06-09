@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>rc.championship.platform</groupId>
-        <artifactId>rc-championship-platform-parent</artifactId>
+        <groupId>rc.championship.platform.decoder</groupId>
+        <artifactId>rc-championship-decoders</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>rc-championship-api</artifactId>
+    <artifactId>decoder-control</artifactId>
     <packaging>nbm</packaging>
     <build>
         <plugins>
@@ -14,15 +14,6 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
                 <extensions>true</extensions>
-                <configuration>
-                    <publicPackages>
-                        <publicPackage>rc.championship.api.model</publicPackage>
-                        <publicPackage>rc.championship.api.services</publicPackage>
-                        <publicPackage>rc.championship.api.services.decoder</publicPackage>
-                        <publicPackage>rc.championship.api.ui</publicPackage>
-                        <publicPackage>rc.championship.api.util</publicPackage>
-                    </publicPackages>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -30,10 +21,6 @@
                 <configuration>
                     <useDefaultManifestFile>true</useDefaultManifestFile>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -44,17 +31,8 @@
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-openide-nodes</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
         <dependency>
@@ -64,16 +42,34 @@
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
-            <artifactId>org-openide-io</artifactId>
-            <version>RELEASE80</version>
+            <artifactId>org-netbeans-modules-options-api</artifactId>
+            <version>${netbeans.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.json</groupId>
-            <artifactId>javax.json-api</artifactId>
-            <version>1.0</version>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-awt</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>rc.championship.platform</groupId>
+            <artifactId>rc-championship-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jdesktop</groupId>
+            <artifactId>beansbinding</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-windows</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-settings</artifactId>
+            <version>${netbeans.version}</version>
         </dependency>
     </dependencies>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 </project>

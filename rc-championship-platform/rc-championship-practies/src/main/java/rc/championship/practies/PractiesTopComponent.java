@@ -8,8 +8,8 @@ import org.openide.util.NbBundle;
 import org.openide.windows.IOProvider;
 import org.openide.windows.TopComponent;
 import rc.championship.api.model.Lap;
-import rc.championship.api.services.ConnectorListener;
-import rc.championship.api.services.TrackConnector;
+import rc.championship.api.services.decoder.ConnectorListener;
+import rc.championship.api.services.decoder.TrackConnector;
 
 /**
  * Top component which displays something.

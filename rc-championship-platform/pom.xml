@@ -112,6 +112,7 @@
         <module>storage-h2-database</module>
         <module>track-connector-mylaps</module>
         <module>track-connector-mylaps-emulator</module>
+        <module>rc-championship-decoders</module>
     </modules>
 
     <properties>

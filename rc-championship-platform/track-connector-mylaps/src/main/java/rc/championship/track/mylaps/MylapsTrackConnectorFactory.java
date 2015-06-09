@@ -1,8 +1,8 @@
 package rc.championship.track.mylaps;
 
 import org.openide.util.lookup.ServiceProvider;
-import rc.championship.api.services.TrackConnector;
-import rc.championship.api.services.TrackConnectorFactory;
+import rc.championship.api.services.decoder.TrackConnector;
+import rc.championship.api.services.decoder.TrackConnectorFactory;
 
 @ServiceProvider(service = TrackConnectorFactory.class)
 public class MylapsTrackConnectorFactory implements TrackConnectorFactory {

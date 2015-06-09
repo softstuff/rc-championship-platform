@@ -1,4 +1,4 @@
-package rc.championship.api.services;
+package rc.championship.api.services.decoder;
 
 import rc.championship.api.model.Lap;
 

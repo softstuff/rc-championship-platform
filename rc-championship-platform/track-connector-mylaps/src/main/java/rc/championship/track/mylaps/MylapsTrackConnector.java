@@ -10,8 +10,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.windows.IOProvider;
-import rc.championship.api.services.ConnectorListener;
-import rc.championship.api.services.TrackConnector;
+import rc.championship.api.services.decoder.ConnectorListener;
+import rc.championship.api.services.decoder.TrackConnector;
 
 
 

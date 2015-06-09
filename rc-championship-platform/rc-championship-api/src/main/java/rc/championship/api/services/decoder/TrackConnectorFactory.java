@@ -1,4 +1,6 @@
-package rc.championship.api.services;
+package rc.championship.api.services.decoder;
+
+
 
 /**
  *
