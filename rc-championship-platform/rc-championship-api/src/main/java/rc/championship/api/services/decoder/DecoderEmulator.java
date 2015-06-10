@@ -13,6 +13,7 @@ public interface DecoderEmulator {
     
     void send(DecoderMessage ... messages);
     
+    public boolean isStarted();
     void startEmulator(String host, int port);
     void stopEmulator();
     
@@ -23,6 +24,8 @@ public interface DecoderEmulator {
     void pause();
     void resume();
     boolean isPaused();
+
+    
     
     
 }

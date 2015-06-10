@@ -35,5 +35,10 @@
             <artifactId>rc-championship-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-io</artifactId>
+            <version>RELEASE80</version>
+        </dependency>
     </dependencies>
 </project>

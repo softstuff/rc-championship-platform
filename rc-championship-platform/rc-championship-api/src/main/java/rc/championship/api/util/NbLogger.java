@@ -14,7 +14,7 @@ public class NbLogger {
     public static NbLogger getEmulatorLogger(Class owner){
         return new NbLogger("MyLaps emulator", owner);
     }
-    
+        
     private final Class owner;
     private final String name;
     private final InputOutput io;

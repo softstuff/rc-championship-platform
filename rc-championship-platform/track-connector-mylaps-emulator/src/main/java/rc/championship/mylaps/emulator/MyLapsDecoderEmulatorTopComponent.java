@@ -301,8 +301,7 @@ public final class MyLapsDecoderEmulatorTopComponent extends TopComponent implem
 
     private void log(String format, Object ... args){
         String msg = String.format(format, args);
-        IOProvider.getDefault().getIO("MyLaps emulator", false).getOut().println(msg);
-        
+        IOProvider.getDefault().getIO("MyLaps emulator", false).getOut().println(msg);        
     }
 
     private String getHostName() {

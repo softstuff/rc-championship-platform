@@ -1,4 +1,4 @@
-package rc.championship.decoder.status;
+package rc.championship.decoder.recorder;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -10,22 +10,15 @@ import org.openide.util.Lookup;
 import rc.championship.api.model.Decoder;
 import rc.championship.api.services.decoder.DecoderServices;
 
-/**
- *
- * @author Stefan
- */
-public class StatusPresentationModel  {
 
-    
+public class RecorderPresentationModel {
     public static final String PROP_DECODER = "decoder";
-    public static final String PROP_CONNECTOR = "connector";
     
     private final List<Decoder> allDecoders = new ArrayList<>();
     private Decoder decoder;
-
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-    public StatusPresentationModel() {
+    public RecorderPresentationModel() {
         refreshDecoderList();
     }
 
@@ -42,7 +35,7 @@ public class StatusPresentationModel  {
         this.decoder = decoder;
         pcs.firePropertyChange(PROP_DECODER, old, decoder);
     }
-      
+
     
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
@@ -64,6 +57,4 @@ public class StatusPresentationModel  {
             Exceptions.printStackTrace(ex);
         }
     }
-    
-    
 }

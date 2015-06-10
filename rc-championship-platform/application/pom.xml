@@ -51,18 +51,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>rc.championship.platform.mylaps</groupId>
-            <artifactId>track-connector-mylaps</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>rc.championship.mylaps</groupId>
-            <artifactId>track-connector-mylaps-emulator</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>rc.championship.platform.decoder</groupId>
             <artifactId>decoder-mylaps</artifactId>
             <version>1.0-SNAPSHOT</version>

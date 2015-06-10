@@ -11,4 +11,8 @@ public interface DecoderConnectionFactory {
     String getDecoderName();
     
     DecoderConnector createConnector(Decoder decoder);
+    
+    DecoderEmulator createEmulator();
+
+    DecoderRecorder createRecorder();
 }

@@ -160,4 +160,10 @@ public class Decoder {
         }
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s %s:%d", decoderName, host, port);
+    }
+
+    
 }
