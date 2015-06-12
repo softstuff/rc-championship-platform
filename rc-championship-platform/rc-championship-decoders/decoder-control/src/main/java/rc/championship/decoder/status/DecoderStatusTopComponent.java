@@ -2,8 +2,11 @@ package rc.championship.decoder.status;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -40,6 +43,8 @@ import rc.championship.api.services.decoder.DecoderMessage;
 })
 public final class DecoderStatusTopComponent extends TopComponent {
 
+    private static final Logger LOG = Logger.getLogger(DecoderStatusTopComponent.class.getName());
+    
     StringBuilder decoderLog = new StringBuilder();
     private DecoderListener connectorListener = new DecoderListener() {
 
@@ -61,6 +66,13 @@ public final class DecoderStatusTopComponent extends TopComponent {
         public void recived(DecoderMessage message, Decoder source) {
             appendDecoderLog(NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.ReceivedMsg", message, source));
         }
+
+        @Override
+        public void receivedCorruptData(Integer from, Integer start, String hexData, Decoder source) {
+            appendDecoderLog(NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.ReceivedCorruptData",from, start, hexData, source));
+        }
+        
+        
 
         @Override
         public void transmitted(DecoderMessage message, Decoder source) {
@@ -247,13 +259,18 @@ public final class DecoderStatusTopComponent extends TopComponent {
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
         Decoder decoder = model.getDecoder();
-        if(decoder != null ){            
+        if(decoder != null ){       
             if(decoder.isConnected()){
                 appendDecoderLog(NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.ClickDisconnect"));
                 decoder.disconnect();
             } else {
                 appendDecoderLog(NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.ClickConnect"));
-                decoder.connect();
+                try{
+                    decoder.connect();
+                } catch(IOException ex){
+                    appendDecoderLog(NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.ConnectionFailed",ex.getMessage()));
+                    LOG.log(Level.WARNING, "failed to connect to decoder: "+decoder, ex);
+                }
             }
         }
     }//GEN-LAST:event_connectButtonActionPerformed

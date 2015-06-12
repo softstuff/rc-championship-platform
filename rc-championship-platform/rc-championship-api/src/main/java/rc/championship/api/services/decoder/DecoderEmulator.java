@@ -14,8 +14,8 @@ public interface DecoderEmulator {
     void send(DecoderMessage ... messages);
     
     public boolean isStarted();
-    void startEmulator(String host, int port);
-    void stopEmulator();
+    void startDecoder(String host, int port);
+    void stopDecoder();
     
     void play(OutputStream output);
     void stop();

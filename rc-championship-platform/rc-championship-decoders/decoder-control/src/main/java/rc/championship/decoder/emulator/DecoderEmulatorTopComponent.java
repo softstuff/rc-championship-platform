@@ -368,7 +368,7 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
                 log("Click start");
                 int port = model.getPort();
                 String hostname = getHostName();
-                emulator.startEmulator(hostname, port);
+                emulator.startDecoder(hostname, port);
                 startStopButton.setText( NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.startStopButton.stop.text") );
             } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);

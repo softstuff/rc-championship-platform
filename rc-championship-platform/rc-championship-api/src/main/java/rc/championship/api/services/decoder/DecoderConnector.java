@@ -1,5 +1,6 @@
 package rc.championship.api.services.decoder;
 
+import java.io.IOException;
 import rc.championship.api.model.Decoder;
 
 /**
@@ -16,7 +17,7 @@ public interface DecoderConnector {
     
     boolean isConnected();
     
-    void connect();
+    void connect() throws IOException;
 
     void disconnect();
 }

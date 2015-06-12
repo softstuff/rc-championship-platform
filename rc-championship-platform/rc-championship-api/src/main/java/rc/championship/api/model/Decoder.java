@@ -2,6 +2,7 @@ package rc.championship.api.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import rc.championship.api.services.decoder.DecoderConnectionFactory;
@@ -127,7 +128,7 @@ public class Decoder {
         connector.unregister(listener);
     }
 
-    public void connect() {
+    public void connect() throws IOException {
         createConnectorIfNeeded();
         if (connector.isConnected()) {
             return;
