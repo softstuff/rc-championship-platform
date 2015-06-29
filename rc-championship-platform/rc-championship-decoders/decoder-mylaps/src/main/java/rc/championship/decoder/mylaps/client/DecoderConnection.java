@@ -1,8 +1,6 @@
 package rc.championship.decoder.mylaps.client;
 
-import eu.plib.P3tools.MsgProcessor;
 import eu.plib.P3tools.data.Const;
-import eu.plib.Ptools.Message;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -84,7 +82,9 @@ public class DecoderConnection {
         service.execute(new IncomingReader());
         service.execute(new OutgoingWriter());
 
-        connectionTrigger.connected(this);
+        if(connectionTrigger!=null){
+            connectionTrigger.connected(this);
+        }
         // for no blocking connection
 //        while(! channel.finishConnect() ){
 //    //wait, or do something else...    
@@ -92,7 +92,7 @@ public class DecoderConnection {
     }
 
     boolean isConnected() {
-        return channel.isConnected();
+        return channel != null && channel.isConnected();
     }
 
     /**
@@ -116,8 +116,11 @@ public class DecoderConnection {
 
     public void disconnect(String reason) {
         if (isConnected()) {
+            SocketChannel old = channel;
+            channel = null;
             logToOutput("Disconnecting, %s", reason);
-            IOUtils.closeQuietly(channel);
+            IOUtils.closeQuietly(old);
+            listeners.forEach(listerner -> listerner.disconnected(reason, decoder));
         }
         if (connectionTrigger != null) {
             connectionTrigger.disconnected(reason, this);
@@ -162,8 +165,10 @@ public class DecoderConnection {
                 }
 
             } catch (Exception ex) {
-                logExceptionToOutput("unexpected exception", ex);
-                disconnect("unexpected exeption");
+                if(channel != null){
+                    logExceptionToOutput("unexpected exception", ex);
+                    disconnect("unexpected exeption");
+                }
             } finally {
                 logToOutput("exit incomming connection");
                 disconnect("exit incomming connection");
@@ -175,9 +180,9 @@ public class DecoderConnection {
     void processBuffer(ByteBuffer readBuffer, int bytes) {
 
         int from = 0;
-        while (true) {
+        while (from<bytes) {
             int startOfRecord = findPositition(Const.SOR, from, bytes, readBuffer);
-            if (startOfRecord <= 0) {
+            if (startOfRecord < 0) {
                 String hexBinary = DatatypeConverter.printHexBinary(readBuffer.array());
                 LOG.log(Level.WARNING, "failed to find start of message: %s", hexBinary);
                 continue;
@@ -191,9 +196,13 @@ public class DecoderConnection {
             if (startOfRecord != from) {
 
             }
+            endOfRecord +=1;
+            readBuffer.flip();
             byte[] msgData = new byte[endOfRecord - startOfRecord];
             readBuffer.get(msgData, startOfRecord, endOfRecord);
-
+            
+            from = endOfRecord+1;
+//            readBuffer.flip();
             DecoderMessage msg = P3Converter.convertToMessage(msgData);
             fireDataReadEvent(msg);
         }
@@ -227,8 +236,10 @@ public class DecoderConnection {
         @Override
         public void run() {
 
+            
             logToOutput("start message sender");
             try {
+                P3Converter converter = new P3Converter();
 
                 if (!isConnected()) {
                     throw new IllegalStateException("channel is not connected on start of sender thread");
@@ -243,30 +254,25 @@ public class DecoderConnection {
                             Thread.sleep(100);
                         }
                     } else {
-                        ByteBuffer data = prepare(msgToSend);
+                        ByteBuffer data = converter.convertToBytes(msgToSend);
                         data.flip();
-                        while (data.hasRemaining()) {
+                        while (data.hasRemaining() && isConnected()) {
                             channel.write(data);
                         }
                     }
                 }
 
             } catch (Exception ex) {
-                logExceptionToOutput("unexpected exception in sender thread", ex);
-                disconnect("unexpected exeption in sender thread");
+                if(channel != null){
+                    logExceptionToOutput("unexpected exception in sender thread", ex);
+                    disconnect("unexpected exeption in sender thread");
+                }
             } finally {
                 logToOutput("exit sender thread");
                 disconnect("exit sender thread");
             }
         }
 
-        private ByteBuffer prepare(DecoderMessage msg) {
-            MsgProcessor msgProcessor = new MsgProcessor();
-            String json = msg.toJson();
-            Message p3Msg = msgProcessor.parseJson(json);
-            byte[] data = msgProcessor.build(p3Msg);
-            return ByteBuffer.wrap(data);
-        }
     }
 
     private void logToOutput(String format, Object... args) {

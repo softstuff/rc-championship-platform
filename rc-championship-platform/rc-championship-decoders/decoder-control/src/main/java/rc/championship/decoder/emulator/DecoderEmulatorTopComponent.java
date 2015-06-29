@@ -1,5 +1,7 @@
 package rc.championship.decoder.emulator;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -18,6 +20,7 @@ import org.openide.windows.TopComponent;
 import rc.championship.api.model.Decoder;
 import rc.championship.api.services.decoder.DecoderConnectionFactory;
 import rc.championship.api.services.decoder.DecoderEmulator;
+import rc.championship.api.services.decoder.DecoderMessage;
 import rc.championship.api.util.NbLogger;
 
 /**
@@ -47,13 +50,25 @@ import rc.championship.api.util.NbLogger;
 public final class DecoderEmulatorTopComponent extends TopComponent {
 
     private NbLogger logger = NbLogger.getEmulatorLogger(getClass());
-    
+
     DecoderEmulator emulator;
+
     public DecoderEmulatorTopComponent() {
         initComponents();
         setName(Bundle.CTL_DecoderEmulatorTopComponent());
         setToolTipText(Bundle.HINT_DecoderEmulatorTopComponent());
 
+        model.addPropertyChangeListener(new PropertyChangeListener() {
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if(evt.getPropertyName().equals(EmulatorPresentationModel.PROP_AUTONOOFDRIVERS)){}
+                else if(evt.getPropertyName().equals(EmulatorPresentationModel.PROP_AUTOLAPTIME)){}
+                else if(evt.getPropertyName().equals(EmulatorPresentationModel.PROP_AUTOLAPSPREAD)){}
+                else if(evt.getPropertyName().equals(EmulatorPresentationModel.PROP_CONNECTOR)){}
+                else if(evt.getPropertyName().equals(EmulatorPresentationModel.PROP_DECODER)){}
+            }
+        });
     }
 
     /**
@@ -74,22 +89,35 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
         hostLabel = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         portTextField = new javax.swing.JTextField();
+        startStopButton = new javax.swing.JButton();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        transponderTextField = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        startStopButton = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
         playFileLabel = new javax.swing.JLabel();
         playFileTextField = new javax.swing.JTextField();
         playFileBrowseButton1 = new javax.swing.JButton();
         playFilePlayButton = new javax.swing.JButton();
         playFilePauseButton = new javax.swing.JButton();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jSlider1 = new javax.swing.JSlider();
+        jSlider2 = new javax.swing.JSlider();
+        jLabel8 = new javax.swing.JLabel();
+        jSlider3 = new javax.swing.JSlider();
+        noOfDriversLabel = new javax.swing.JLabel();
+        laptimeLabel = new javax.swing.JLabel();
+        spreadLabel = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jLabel1.text")); // NOI18N
 
@@ -114,16 +142,28 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
         binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${port}"), portTextField, org.jdesktop.beansbinding.BeanProperty.create("text"));
         bindingGroup.addBinding(binding);
 
+        org.openide.awt.Mnemonics.setLocalizedText(startStopButton, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.startStopButton.text")); // NOI18N
+        startStopButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startStopButtonActionPerformed(evt);
+            }
+        });
+
         org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jLabel3.text")); // NOI18N
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jPanel2.border.title"))); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel5, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jLabel5.text")); // NOI18N
 
-        jTextField2.setText(org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jTextField2.text")); // NOI18N
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${nextPassing.transponder}"), transponderTextField, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        bindingGroup.addBinding(binding);
 
         org.openide.awt.Mnemonics.setLocalizedText(jButton2, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jButton2.text")); // NOI18N
-        jButton2.setEnabled(false);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -132,48 +172,40 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(transponderTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 230, Short.MAX_VALUE)
                 .addComponent(jButton2))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(jLabel5)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(transponderTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(jButton2))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jPanel3.border.title"))); // NOI18N
 
-        jTextField1.setText(org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jTextField1.text")); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel6, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jLabel6.text")); // NOI18N
-
         org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jButton1.text")); // NOI18N
-        jButton1.setEnabled(false);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
-                .addComponent(jButton1)
-                .addContainerGap(332, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jButton1))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jButton1)
+                .addGap(0, 26, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -198,15 +230,10 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 25, Short.MAX_VALUE))
+                .addGap(0, 88, Short.MAX_VALUE))
         );
 
-        org.openide.awt.Mnemonics.setLocalizedText(startStopButton, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.startStopButton.text")); // NOI18N
-        startStopButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                startStopButtonActionPerformed(evt);
-            }
-        });
+        jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(playFileLabel, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.playFileLabel.text")); // NOI18N
 
@@ -231,62 +258,178 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
             }
         });
 
+        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jCheckBox1.text")); // NOI18N
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(playFileLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jCheckBox1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(playFilePlayButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(playFilePauseButton))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(playFileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(playFileBrowseButton1)))
+                .addContainerGap(75, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(playFileLabel)
+                    .addComponent(playFileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(playFileBrowseButton1))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(playFilePlayButton)
+                        .addComponent(playFilePauseButton))
+                    .addComponent(jCheckBox1))
+                .addContainerGap(163, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel6, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jLabel6.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel7, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jLabel7.text")); // NOI18N
+
+        jSlider1.setMaximum(12);
+        jSlider1.setMinimum(1);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${autoNoOfDrivers}"), jSlider1, org.jdesktop.beansbinding.BeanProperty.create("value"));
+        bindingGroup.addBinding(binding);
+
+        jSlider2.setMajorTickSpacing(10);
+        jSlider2.setMinimum(10);
+        jSlider2.setMinorTickSpacing(1);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${autoLaptime}"), jSlider2, org.jdesktop.beansbinding.BeanProperty.create("value"));
+        bindingGroup.addBinding(binding);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel8, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jLabel8.text")); // NOI18N
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${autoLapSpread}"), jSlider3, org.jdesktop.beansbinding.BeanProperty.create("value"));
+        bindingGroup.addBinding(binding);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${autoNoOfDrivers}"), noOfDriversLabel, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        bindingGroup.addBinding(binding);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${autoLaptime}"), laptimeLabel, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        bindingGroup.addBinding(binding);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${autoLapSpread}"), spreadLabel, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        bindingGroup.addBinding(binding);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel8))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(noOfDriversLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                                .addComponent(spreadLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSlider3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(laptimeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(531, 531, 531))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(noOfDriversLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel6)
+                    .addComponent(jSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel7)
+                    .addComponent(jSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(laptimeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(3, 3, 3)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(spreadLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSlider3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
+                .addContainerGap(143, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jPanel5.TabConstraints.tabTitle"), jPanel5); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel9, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.jLabel9.text")); // NOI18N
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${decoderId}"), jTextField1, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        bindingGroup.addBinding(binding);
+
         javax.swing.GroupLayout controlPanelLayout = new javax.swing.GroupLayout(controlPanel);
         controlPanel.setLayout(controlPanelLayout);
         controlPanelLayout.setHorizontalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(controlPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(hostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel4)
-                .addGap(18, 18, 18)
-                .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(startStopButton)
-                .addContainerGap(356, Short.MAX_VALUE))
-            .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(controlPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(controlPanelLayout.createSequentialGroup()
-                            .addComponent(playFileLabel)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(playFileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(playFileBrowseButton1)
-                            .addGap(18, 18, 18)
-                            .addComponent(playFilePlayButton)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(68, 68, 68)
+                            .addComponent(startStopButton))
+                        .addGroup(controlPanelLayout.createSequentialGroup()
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(playFilePauseButton)))
-                    .addContainerGap(41, Short.MAX_VALUE)))
+                            .addComponent(hostLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jLabel4)
+                            .addGap(18, 18, 18)
+                            .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 578, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(351, Short.MAX_VALUE))
         );
         controlPanelLayout.setVerticalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(controlPanelLayout.createSequentialGroup()
-                .addGap(58, 58, 58)
+                .addContainerGap(59, Short.MAX_VALUE)
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(startStopButton)
                     .addComponent(hostLabel)
                     .addComponent(jLabel2))
-                .addContainerGap(271, Short.MAX_VALUE))
-            .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(controlPanelLayout.createSequentialGroup()
-                    .addGap(94, 94, 94)
-                    .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(playFileLabel)
-                        .addComponent(playFileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(playFileBrowseButton1)
-                        .addComponent(playFilePlayButton)
-                        .addComponent(playFilePauseButton))
-                    .addGap(41, 41, 41)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(startStopButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(42, 42, 42))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -298,7 +441,7 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(decoderComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(447, 447, 447))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addComponent(controlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
@@ -322,7 +465,7 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
         int returnVal = fileChooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            playFileTextField.setText(file.getAbsolutePath() );
+            playFileTextField.setText(file.getAbsolutePath());
         } else {
             log("File access cancelled by user.");
         }
@@ -342,8 +485,8 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
 
     private void playFilePauseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playFilePauseButtonActionPerformed
 
-        if(emulator.isPlaying()){
-            if(emulator.isPaused()){
+        if (emulator.isPlaying()) {
+            if (emulator.isPaused()) {
                 emulator.resume();
                 org.openide.awt.Mnemonics.setLocalizedText(playFilePauseButton, org.openide.util.NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.playFilePauseButton.text")); // NOI18N
 
@@ -359,17 +502,17 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
 
     private void startStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startStopButtonActionPerformed
 
-        if(emulator.isStarted()){
+        if (emulator.isStarted()) {
             log("Click stop");
-            emulator.stop();
-            startStopButton.setText( NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.startStopButton.text") );
+            emulator.stopDecoder();
+            startStopButton.setText(NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.startStopButton.text"));
         } else {
             try {
                 log("Click start");
                 int port = model.getPort();
                 String hostname = getHostName();
                 emulator.startDecoder(hostname, port);
-                startStopButton.setText( NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.startStopButton.stop.text") );
+                startStopButton.setText(NbBundle.getMessage(DecoderEmulatorTopComponent.class, "DecoderEmulatorTopComponent.startStopButton.stop.text"));
             } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -377,23 +520,52 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
     }//GEN-LAST:event_startStopButtonActionPerformed
 
     private void decoderComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_decoderComboBoxActionPerformed
-        
+
         Decoder decoder = model.getDecoder();
-        if(decoder == null){
+        if (decoder == null) {
             controlPanel.setVisible(false);
             return;
         }
         Optional<DecoderConnectionFactory> factory = decoder.getConnectorFactory();
-        if(factory == null || !factory.isPresent()){
+        if (factory == null || !factory.isPresent()) {
             controlPanel.setVisible(false);
             return;
         }
         emulator = factory.get().createEmulator();
         controlPanel.setVisible(true);
-        
-        
-        
+
+
     }//GEN-LAST:event_decoderComboBoxActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+        if (emulator == null || !emulator.isStarted()) {
+            throw new IllegalStateException("Emulator is not started yet");
+        }
+
+//        {"RTC_TIME":"516EB9C137218","flags":"0","recordType":"Time","TOR":"24","crcOk":true,"unknownFields":{},"emptyFields":{},"VERSION":"2","SPARE":"1F00","FLAGS":"0000","decoderId":"97220400"}
+//        RTC_TIME 1432576075199000 ns / 1000 == 1432576075199 ms
+        DecoderMessage msg = new DecoderMessage.Builder(DecoderMessage.Command.Time)
+                //                .set("UTC_TIME", Clock.systemUTC().millis())
+
+                .set("RTC_TIME", Long.toHexString(System.currentTimeMillis() * 1000).toUpperCase())
+                .set("decoderId", model.getDecoderId()+"")
+                .build();
+
+        emulator.send(msg);
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+
+        DecoderMessage msg = new DecoderMessage.Builder(DecoderMessage.Command.Passing)
+                .set("RTC_TIME", Long.toHexString(System.currentTimeMillis() * 1000).toUpperCase())
+                .set("transponder", Long.toHexString(model.getNextPassing().transponder))
+                .set("passingNumber", Long.toHexString(model.getNextPassing().passingNumber++))
+                .set("decoderId", model.getDecoderId()+"")
+                .build();
+        emulator.send(msg);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel controlPanel;
@@ -402,25 +574,38 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
     private javax.swing.JLabel hostLabel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JSlider jSlider1;
+    private javax.swing.JSlider jSlider2;
+    private javax.swing.JSlider jSlider3;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JLabel laptimeLabel;
     private rc.championship.decoder.emulator.EmulatorPresentationModel model;
+    private javax.swing.JLabel noOfDriversLabel;
     private javax.swing.JButton playFileBrowseButton1;
     private javax.swing.JLabel playFileLabel;
     private javax.swing.JButton playFilePauseButton;
     private javax.swing.JButton playFilePlayButton;
     private javax.swing.JTextField playFileTextField;
     private javax.swing.JTextField portTextField;
+    private javax.swing.JLabel spreadLabel;
     private javax.swing.JButton startStopButton;
+    private javax.swing.JTextField transponderTextField;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
     @Override
@@ -444,7 +629,7 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
     }
-    
+
     private String getHostName() {
         try {
             InetAddress addr = InetAddress.getLocalHost();

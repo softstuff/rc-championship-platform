@@ -43,7 +43,7 @@ public class DecoderServer implements Runnable {
             }
         }
         
-        void start(String hostname, int serverPort) throws IOException{
+        void start(String hostname, int serverPort) throws IOException {
             LOG.log(Level.FINER, "start listen for client on port {0}", serverPort);
             serverSocketChannel = ServerSocketChannel.open();
             serverSocketChannel.socket().bind(new InetSocketAddress(hostname, serverPort));

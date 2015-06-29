@@ -3,6 +3,7 @@ package rc.championship.decoder.mylaps.client;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +14,7 @@ import org.openide.windows.IOProvider;
 import rc.championship.api.model.Decoder;
 import rc.championship.api.services.decoder.DecoderConnector;
 import rc.championship.api.services.decoder.DecoderListener;
+import rc.championship.api.services.decoder.DecoderMessage;
 
 public class MyLapsDecoderConnector implements DecoderConnector {
 
@@ -40,9 +42,11 @@ public class MyLapsDecoderConnector implements DecoderConnector {
             }
         }        
     };
+    
 
     public MyLapsDecoderConnector(Decoder decoder) {
         this.decoder = decoder;
+        executor = Executors.newScheduledThreadPool(10);
     }
 
     @Override
@@ -71,6 +75,18 @@ public class MyLapsDecoderConnector implements DecoderConnector {
             }
             if(connection==null){
                 connection = new DecoderConnection(decoder, listeners);
+                connection.setConnectionTrigger(new DecoderConnection.ConnectionTrigger() {
+
+                    @Override
+                    public void connected(DecoderConnection source) {
+                        logToOutput("connected");
+                    }
+
+                    @Override
+                    public void disconnected(String reason, DecoderConnection source) {
+                        logToOutput("disconnected ", reason);
+                    }
+                });
             }
             connection.connect(executor);
             keepAliveSchedule = executor.schedule(keepAliveWatch, KEEP_ALIVE_INTERVALL, TimeUnit.SECONDS);
@@ -91,6 +107,11 @@ public class MyLapsDecoderConnector implements DecoderConnector {
         connection.disconnect("User selected");
         started = false;
         fireDisconnectedEvent("User selected");        
+    }
+    
+    @Override
+    public void send(DecoderMessage msg, long timeout, TimeUnit timeUnit) throws IOException, InterruptedException {
+        connection.send(msg, timeout, timeUnit);
     }
     
     private void fireConnectedEvent(){

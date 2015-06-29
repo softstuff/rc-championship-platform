@@ -1,5 +1,6 @@
 package rc.championship.decoder.mylaps.emulator;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.channels.SocketChannel;
 import java.util.List;
@@ -64,7 +65,7 @@ public class MyLapsDecoderEmulator implements DecoderEmulator  {
             public void newClient(SocketChannel socketChannel) {
                 ClientConnection clientConnection = new ClientConnection(socketChannel, transferListeners);
                 clients.add(clientConnection);
-                executor.execute(clientConnection);
+                clientConnection.startThreads(executor);
                 log("new client connected %s", clientConnection);
             }
 
@@ -95,28 +96,40 @@ public class MyLapsDecoderEmulator implements DecoderEmulator  {
 
     @Override
     public void send(DecoderMessage... messages) {
+        if(!isStarted()){
+            throw new IllegalStateException("Emulator is not started yet");
+        }
+        if(messages == null || clients.isEmpty()){
+            return;
+        }
+        for(DecoderMessage msg : messages){
+            clients.forEach(client->client.send(msg));
+        }
+        
         log("send");
     }
 
     @Override
     public boolean isStarted() {
         log("isStarted");
-        return decoderServer.isRunning();
+        return decoderServer != null && decoderServer.isRunning();
     }
 
     @Override
-    public void startDecoder(String host, int port) {
+    public void startDecoder(String host, int port)throws IOException {
         log("startEmulator");
-        if(decoderServer != null && decoderServer.isRunning()){
+        if(isStarted()){
             throw new IllegalStateException("emulatorServer is running");
         }
         decoderServer = new DecoderServer(serverListener);
+        decoderServer.start(host, port);
         executor.execute(decoderServer);
     }
 
     @Override
     public void stopDecoder() {
         log("stopEmulator");
+        clients.forEach(client->client.close());
         decoderServer.shutdown();        
     }
 
@@ -133,7 +146,7 @@ public class MyLapsDecoderEmulator implements DecoderEmulator  {
     }
 
     @Override
-    public void stop() {
+    public void stopPlaying() {
         log("stop");
         playing = false;
     }

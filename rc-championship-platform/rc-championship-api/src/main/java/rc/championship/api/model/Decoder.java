@@ -5,9 +5,11 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import rc.championship.api.services.decoder.DecoderConnectionFactory;
 import rc.championship.api.services.decoder.DecoderConnector;
 import rc.championship.api.services.decoder.DecoderListener;
+import rc.championship.api.services.decoder.DecoderMessage;
 
 /**
  *
@@ -21,6 +23,7 @@ public class Decoder {
 
     private String host;
     private Integer port;
+    private Integer id;
     private String decoderName;
     private Optional<DecoderConnectionFactory> connectorFactory;
     private String identifyer;
@@ -44,6 +47,14 @@ public class Decoder {
         pcs.removePropertyChangeListener(listener);
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    
     public String getHost() {
         return host;
     }
@@ -164,6 +175,13 @@ public class Decoder {
     @Override
     public String toString() {
         return String.format("%s %s:%d", decoderName, host, port);
+    }
+
+    public void send(DecoderMessage msg, long timeout, TimeUnit timeUnit) throws IOException, InterruptedException {
+        if(!isConnected()){
+            throw new IllegalStateException("Can not send message, decoder has no active connection");
+        }
+        connector.send(msg, timeout, timeUnit);
     }
 
     

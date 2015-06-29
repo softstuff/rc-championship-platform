@@ -64,7 +64,7 @@ public final class DecoderStatusTopComponent extends TopComponent {
 
         @Override
         public void recived(DecoderMessage message, Decoder source) {
-            appendDecoderLog(NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.ReceivedMsg", message, source));
+            appendDecoderLog(NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.ReceivedMsg", MessageRenderer.wrap(message), source));
         }
 
         @Override
@@ -299,7 +299,7 @@ public final class DecoderStatusTopComponent extends TopComponent {
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
+        model.refreshDecoderList();
     }
 
     @Override

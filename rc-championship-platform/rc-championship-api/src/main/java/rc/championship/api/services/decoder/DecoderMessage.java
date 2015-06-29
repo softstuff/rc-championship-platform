@@ -103,6 +103,14 @@ public class DecoderMessage {
         return Optional.ofNullable((T) json.get(field));
     }
     
+    public <T> void set(String field, T value) {
+        if(value == null){
+            json.remove(field);
+        } else {
+            json.put(field, value);
+        }
+    }
+    
     public String toJson() {
         return json.toString();
     }
@@ -114,6 +122,9 @@ public class DecoderMessage {
 
         public Builder(Command command) {
             this.command = command;
+            set("recordType", command.name());
+            set("SPARE", "0000");
+            set("VERSION", "2");
         }
 
         public <T> Builder set(String field, T value) {

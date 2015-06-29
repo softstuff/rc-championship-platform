@@ -1,6 +1,7 @@
 package rc.championship.api.services.decoder;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import rc.championship.api.model.Decoder;
 
 /**
@@ -20,4 +21,6 @@ public interface DecoderConnector {
     void connect() throws IOException;
 
     void disconnect();
+
+    void send(DecoderMessage msg, long timeout, TimeUnit timeUnit) throws IOException, InterruptedException;
 }
