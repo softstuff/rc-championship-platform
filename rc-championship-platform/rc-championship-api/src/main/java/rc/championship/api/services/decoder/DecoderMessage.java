@@ -12,6 +12,16 @@ import org.json.JSONObject;
  */
 public class DecoderMessage {
 
+    public Optional<Integer> getHexInt(String key) {
+        Optional<String> optValue = getString(key);
+        if(!optValue.isPresent()){
+            return Optional.empty();
+        }
+        String hex = optValue.get();
+        int value = Integer.parseInt(hex, 16);
+        return Optional.of(value);
+    }
+
     
 
     public enum Command {

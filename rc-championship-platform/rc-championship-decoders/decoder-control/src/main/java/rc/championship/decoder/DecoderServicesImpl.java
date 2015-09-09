@@ -1,5 +1,6 @@
 package rc.championship.decoder;
 
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,6 +15,8 @@ import rc.championship.api.services.decoder.DecoderServices;
 
 @ServiceProvider(service = DecoderServices.class)
 public class DecoderServicesImpl implements DecoderServices{
+    
+    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
     private final Preferences prefs;
 
@@ -60,9 +63,10 @@ public class DecoderServicesImpl implements DecoderServices{
         pref.put("decoderName", decoder.getDecoderName());
     }
     
-    private void remove(Decoder decoder) throws BackingStoreException{
+    public void remove(Decoder decoder) throws BackingStoreException{
         Preferences pref = prefs.node("decoders/"+decoder.getIdentifyer());
         pref.removeNode();
+        pref.flush();;
     }
 
     private Optional<DecoderConnectionFactory> getFactoryFor(String decoderName) {

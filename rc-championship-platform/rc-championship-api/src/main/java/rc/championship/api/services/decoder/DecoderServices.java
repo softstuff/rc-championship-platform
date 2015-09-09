@@ -13,5 +13,7 @@ public interface DecoderServices {
     List<Decoder> getDecoders() throws BackingStoreException;
     
     void store(List<Decoder> decoders) throws BackingStoreException;
+
+    public void remove(Decoder decoder) throws BackingStoreException;
     
 }

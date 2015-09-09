@@ -5,6 +5,8 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.util.NbBundle;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.IOProvider;
 import org.openide.windows.TopComponent;
 import rc.championship.api.model.Lap;
@@ -38,6 +40,10 @@ public final class PractiesTopComponent extends TopComponent implements Connecto
         initComponents();
         setName(NbBundle.getMessage(getClass(), "CTL_PractiesTopComponent"));
         setToolTipText(NbBundle.getMessage(getClass(), "HINT_PractiesTopComponent"));
+        
+        InstanceContent ic = new InstanceContent ();
+        ic.add(new PractiesLapManager());
+        associateLookup( new AbstractLookup(ic));
     }
 
     /**

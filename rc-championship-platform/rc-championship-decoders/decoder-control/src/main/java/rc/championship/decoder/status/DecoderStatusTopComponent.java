@@ -4,12 +4,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
@@ -25,17 +24,17 @@ import rc.championship.api.services.decoder.DecoderMessage;
         autostore = false
 )
 @TopComponent.Description(
-        preferredID = "DecoderStatusTopComponent",
+        preferredID = DecoderStatusTopComponent.IDENTIFIER,
         //iconBase="SET/PATH/TO/ICON/HERE", 
         persistenceType = TopComponent.PERSISTENCE_NEVER
 )
-@TopComponent.Registration(mode = "editor", openAtStartup = true)
-@ActionID(category = "Window", id = "rc.championship.decoder.status.DecoderStatusTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
-@TopComponent.OpenActionRegistration(
-        displayName = "#CTL_DecoderStatusAction",
-        preferredID = "DecoderStatusTopComponent"
-)
+@TopComponent.Registration(mode = "editor", openAtStartup = false)
+//@ActionID(category = "Window", id = "rc.championship.decoder.status.DecoderStatusTopComponent")
+//@ActionReference(path = "Menu/Window" /*, position = 333 */)
+//@TopComponent.OpenActionRegistration(
+//        displayName = "#CTL_DecoderStatusAction",
+//        preferredID = "DecoderStatusTopComponent"
+//)
 @Messages({
     "CTL_DecoderStatusAction=DecoderStatus",
     "CTL_DecoderStatusTopComponent=DecoderStatus Window",
@@ -44,6 +43,7 @@ import rc.championship.api.services.decoder.DecoderMessage;
 public final class DecoderStatusTopComponent extends TopComponent {
 
     private static final Logger LOG = Logger.getLogger(DecoderStatusTopComponent.class.getName());
+    public static final String IDENTIFIER = "DecoderStatusTopComponent";
     
     StringBuilder decoderLog = new StringBuilder();
     private DecoderListener connectorListener = new DecoderListener() {
@@ -65,21 +65,24 @@ public final class DecoderStatusTopComponent extends TopComponent {
         @Override
         public void recived(DecoderMessage message, Decoder source) {
             appendDecoderLog(NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.ReceivedMsg", MessageRenderer.wrap(message), source));
+            if(message.getCommand() == DecoderMessage.Command.Status){
+                voltageLabel.setText(message.getDouble("inputVoltage").get()/10+"");
+                noiseLabel.setText(message.getHexInt("noise").get()+"");
+                temperatureLabel.setText(message.getHexInt("temperature").get()+"");
+            }
         }
 
         @Override
         public void receivedCorruptData(Integer from, Integer start, String hexData, Decoder source) {
             appendDecoderLog(NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.ReceivedCorruptData",from, start, hexData, source));
         }
-        
-        
 
         @Override
         public void transmitted(DecoderMessage message, Decoder source) {
             appendDecoderLog(NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.TransmittMsg", message, source));
         }
-
     };
+    
     
     public DecoderStatusTopComponent() {
         initComponents();
@@ -102,11 +105,18 @@ public final class DecoderStatusTopComponent extends TopComponent {
                 }
             }
         });
-
+    }
+    public Decoder getDecoder(){
+        return model.getDecoder();
+    }
+    
+    public void setDecoder(Decoder decoder) {
+        model.setDecoder(decoder);
+        invalidate();
     }
         
     private void appendDecoderLog(String row){
-        DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT);
+        DateFormat df = new SimpleDateFormat("HH:mm:ss.SSS");
         decoderLog.append(String.format("%s - %s%n", df.format(new Date()), row));
         decoderLogTextArea.setText(decoderLog.toString());
         decoderLogTextArea.invalidate();
@@ -121,8 +131,7 @@ public final class DecoderStatusTopComponent extends TopComponent {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        model = new rc.championship.decoder.status.StatusPresentationModel();
-        jComboBox1 = new javax.swing.JComboBox();
+        model = createModel();
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -134,20 +143,21 @@ public final class DecoderStatusTopComponent extends TopComponent {
         portLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         decoderLogTextArea = new javax.swing.JTextArea();
-        jLabel5 = new javax.swing.JLabel();
-        refreshButton = new javax.swing.JButton();
-
-        org.jdesktop.beansbinding.ELProperty eLProperty = org.jdesktop.beansbinding.ELProperty.create("${allDecoders}");
-        org.jdesktop.swingbinding.JComboBoxBinding jComboBoxBinding = org.jdesktop.swingbinding.SwingBindings.createJComboBoxBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, eLProperty, jComboBox1);
-        bindingGroup.addBinding(jComboBoxBinding);
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${decoder}"), jComboBox1, org.jdesktop.beansbinding.BeanProperty.create("selectedItem"));
-        bindingGroup.addBinding(binding);
+        jLabel6 = new javax.swing.JLabel();
+        voltageLabel = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        noiseLabel = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        temperatureLabel = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        nameLabel = new javax.swing.JLabel();
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.jLabel1.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.jLabel2.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(statusLabel, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.statusLabel.text")); // NOI18N
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${decoder.connected}"), statusLabel, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        bindingGroup.addBinding(binding);
 
         org.openide.awt.Mnemonics.setLocalizedText(connectButton, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.connectButton.text")); // NOI18N
         connectButton.addActionListener(new java.awt.event.ActionListener() {
@@ -158,20 +168,40 @@ public final class DecoderStatusTopComponent extends TopComponent {
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.jLabel3.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(hostLabel, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.hostLabel.text")); // NOI18N
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${decoder.host}"), hostLabel, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        bindingGroup.addBinding(binding);
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.jLabel4.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(portLabel, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.portLabel.text")); // NOI18N
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${decoder.port}"), portLabel, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        bindingGroup.addBinding(binding);
 
         decoderLogTextArea.setColumns(20);
         decoderLogTextArea.setRows(5);
         jScrollPane1.setViewportView(decoderLogTextArea);
 
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel6, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.jLabel6.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(voltageLabel, "12.0"); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel7, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.jLabel7.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(noiseLabel, "23"); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel8, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.jLabel8.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(temperatureLabel, "21"); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel9, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.jLabel9.text")); // NOI18N
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, model, org.jdesktop.beansbinding.ELProperty.create("${decoder.decoderName}"), nameLabel, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        bindingGroup.addBinding(binding);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,14 +218,33 @@ public final class DecoderStatusTopComponent extends TopComponent {
                         .addGap(18, 18, 18)
                         .addComponent(statusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(connectButton)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(connectButton))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(voltageLabel))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(noiseLabel))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(temperatureLabel))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addGap(18, 18, 18)
+                        .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(579, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(nameLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(hostLabel))
@@ -208,18 +257,21 @@ public final class DecoderStatusTopComponent extends TopComponent {
                     .addComponent(jLabel2)
                     .addComponent(statusLabel)
                     .addComponent(connectButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(voltageLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(noiseLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(temperatureLabel))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel5, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.jLabel5.text")); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(refreshButton, org.openide.util.NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.refreshButton.text")); // NOI18N
-        refreshButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshButtonActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -231,26 +283,16 @@ public final class DecoderStatusTopComponent extends TopComponent {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(refreshButton)
-                        .addGap(0, 158, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel5)
-                    .addComponent(refreshButton))
+                .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -275,26 +317,27 @@ public final class DecoderStatusTopComponent extends TopComponent {
         }
     }//GEN-LAST:event_connectButtonActionPerformed
 
-    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        model.refreshDecoderList();
-    }//GEN-LAST:event_refreshButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton connectButton;
     private javax.swing.JTextArea decoderLogTextArea;
     private javax.swing.JLabel hostLabel;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private rc.championship.decoder.status.StatusPresentationModel model;
+    private javax.swing.JLabel nameLabel;
+    private javax.swing.JLabel noiseLabel;
     private javax.swing.JLabel portLabel;
-    private javax.swing.JButton refreshButton;
     private javax.swing.JLabel statusLabel;
+    private javax.swing.JLabel temperatureLabel;
+    private javax.swing.JLabel voltageLabel;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
     @Override
@@ -317,5 +360,12 @@ public final class DecoderStatusTopComponent extends TopComponent {
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
+    }
+
+    private StatusPresentationModel createModel() {
+        if(model == null){
+            model = new rc.championship.decoder.status.StatusPresentationModel();
+        }
+        return model;
     }
 }

@@ -152,7 +152,7 @@ public class Decoder {
         if (connector == null) {
 
             if (connectorFactory == null || !connectorFactory.isPresent()) {
-                throw new IllegalStateException("Can not connect to decoder, no valid connection implementation was found for " + decoderName);
+                throw new IllegalStateException("Unknown decoder implementation: " + decoderName);
             }
             connector = connectorFactory.get().createConnector(this);
             if (connector == null) {
