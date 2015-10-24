@@ -10,24 +10,35 @@
 
 <Pane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rc.championship.decoder.playback.MessageListViewController">
     <children>
-        <TableView fx:id="tableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0">
-            <columns>
-                <TableColumn fx:id="timeColumn" editable="false" prefWidth="110.0" text="Time">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="time" />
-                    </cellValueFactory>
-                </TableColumn>
-                <TableColumn fx:id="typeColumn" editable="false" prefWidth="90.0" text="Type">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="type" />
-                    </cellValueFactory>
-                </TableColumn>
-                <TableColumn fx:id="dataColumn" editable="false" prefWidth="135.0" text="Data">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="data" />
-                    </cellValueFactory>
-                </TableColumn>
-            </columns>
-        </TableView>
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <HBox>
+               <children>
+                  <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadButton" text="Load" />
+                  <Button fx:id="downloadButton" mnemonicParsing="false" onAction="#downloadButton" text="Download" />
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" />
+              <TableView fx:id="tableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0">
+                  <columns>
+                      <TableColumn fx:id="timeColumn" editable="false" prefWidth="110.0" text="Time">
+                          <cellValueFactory>
+                              <PropertyValueFactory property="time" />
+                          </cellValueFactory>
+                      </TableColumn>
+                      <TableColumn fx:id="typeColumn" editable="false" prefWidth="90.0" text="Type">
+                          <cellValueFactory>
+                              <PropertyValueFactory property="type" />
+                          </cellValueFactory>
+                      </TableColumn>
+                      <TableColumn fx:id="dataColumn" editable="false" prefWidth="135.0" text="Data">
+                          <cellValueFactory>
+                              <PropertyValueFactory property="data" />
+                          </cellValueFactory>
+                      </TableColumn>
+                  </columns>
+              </TableView>
+         </children>
+      </VBox>
     </children>
 </Pane>

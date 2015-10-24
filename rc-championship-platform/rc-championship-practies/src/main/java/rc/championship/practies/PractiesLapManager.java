@@ -5,13 +5,11 @@ import java.beans.PropertyChangeSupport;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.openide.util.lookup.ServiceProvider;
 import rc.championship.api.model.Lap;
 import rc.championship.api.services.LapManager;
 
-/**
- *
- * @author Stefan
- */
+@ServiceProvider(service = LapManager.class)
 public final class PractiesLapManager implements LapManager {
     private static final String PROP_NEW_LAP = "newLap";
     private static final String PROP_RESET_LAP_COUNTER = "resetLapCounter";

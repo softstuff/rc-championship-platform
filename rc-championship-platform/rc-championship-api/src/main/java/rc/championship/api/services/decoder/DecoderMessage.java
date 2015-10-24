@@ -6,23 +6,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.json.JSONObject;
+import rc.championship.api.model.Decoder;
 
 /**
  * Represents a message going in or out from the decoder
  */
 public class DecoderMessage {
 
-    public Optional<Integer> getHexInt(String key) {
-        Optional<String> optValue = getString(key);
-        if(!optValue.isPresent()){
-            return Optional.empty();
-        }
-        String hex = optValue.get();
-        int value = Integer.parseInt(hex, 16);
-        return Optional.of(value);
-    }
-
-    
+    private Decoder decoder;
+        
 
     public enum Command {
         Reset, Status, Passing, Version, ResendPassings, ClearPassings, AuxiliarySettings, ServerSettings, Session, NetworkSettings, ConnectionWatchdog, FunctionUnlock, Ping, Time, GeneralSettings, Signals, LoopTrigger, GPS, FirstContact, Timeline, Error, Unknown
@@ -91,6 +83,15 @@ public class DecoderMessage {
         return Optional.ofNullable(json.getLong(field));
     }
 
+    
+    public String getString(String field, String def) {
+        Optional<String> value = getString(field);
+        if(value.isPresent()){
+            return value.get();
+        }
+        return def;
+    }
+    
     public final Optional<String> getString(String field) {
         if (isNull(field)) {
             return Optional.empty();
@@ -145,6 +146,29 @@ public class DecoderMessage {
         public DecoderMessage build() {
             return new DecoderMessage(command, new HashMap<>(fields));
         }
+    }
+    
+    public Optional<Integer> getHexInt(String key) {
+        Optional<String> optValue = getString(key);
+        if(!optValue.isPresent()){
+            return Optional.empty();
+        }
+        String hex = optValue.get();
+        int value = Integer.parseInt(hex, 16);
+        return Optional.of(value);
+    }
+
+    
+    public void setDecoder(Decoder decoder) {
+        this.decoder = decoder;
+    }
+
+    public Decoder getDecoder() {
+        return decoder;
+    }
+
+    public String getJson() {
+        return json.toString();
     }
     
 }

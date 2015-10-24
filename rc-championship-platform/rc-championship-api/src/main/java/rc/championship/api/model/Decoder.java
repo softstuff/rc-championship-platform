@@ -174,7 +174,7 @@ public class Decoder {
 
     @Override
     public String toString() {
-        return String.format("%s %s:%d", decoderName, host, port);
+        return getDisplayName();
     }
 
     public void send(DecoderMessage msg, long timeout, TimeUnit timeUnit) throws IOException, InterruptedException {
@@ -182,6 +182,10 @@ public class Decoder {
             throw new IllegalStateException("Can not send message, decoder has no active connection");
         }
         connector.send(msg, timeout, timeUnit);
+    }
+
+    public String getDisplayName() {
+        return String.format("%s %s:%d", decoderName, host, port);
     }
 
     

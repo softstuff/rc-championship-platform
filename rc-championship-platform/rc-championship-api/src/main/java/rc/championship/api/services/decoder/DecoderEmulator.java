@@ -1,7 +1,7 @@
 package rc.championship.api.services.decoder;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  *
@@ -18,7 +18,7 @@ public interface DecoderEmulator {
     void startDecoder(String host, int port) throws IOException;
     void stopDecoder();
     
-    void play(OutputStream output);
+    void play(File file);
     void stopPlaying();
     boolean isPlaying();
     

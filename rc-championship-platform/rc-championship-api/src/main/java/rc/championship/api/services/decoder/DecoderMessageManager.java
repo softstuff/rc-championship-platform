@@ -1,82 +1,30 @@
 package rc.championship.api.services.decoder;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.List;
-import org.openide.util.Lookup;
 import rc.championship.api.model.Decoder;
-import rc.championship.api.model.Lap;
-import rc.championship.api.model.MessageConverter;
-import rc.championship.api.services.LapManager;
 
 /**
  *
  * @author Stefan
  */
-public class DecoderMessageManager {
+public interface DecoderMessageManager {
         
-    private final LapManager lapManager;
+    public static final String PROP_DECODER_ATTACHED = "PROP_DECODER_ATTACHED";
+    public static final String PROP_DECODER_DETACHED = "PROP_DECODER_DETACHED"; 
+    public static final String PROP_DECODER_CONNECTED = "PROP_DECODER_CONNECTED"; 
+    public static final String PROP_DECODER_DISCONNECTED = "PROP_DECODER_DISCONNECTED"; 
+    public static final String PROP_MESSAGE_RECIVED = "PROP_MESSAGE_RECIVED"; 
+    public static final String PROP_MESSAGE_TRANSMITTED = "PROP_MESSAGE_TRANSMITTED"; 
+    public static final String PROP_RECIVED_CORRUPT_DATA = "PROP_RECIVED_CORRUPT_DATA"; 
     
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    public void attach(Decoder decoder);
+    public void detach(Decoder decoder);
     
-    private final ListMultimap<Decoder, DecoderMessage> messages = ArrayListMultimap.create();
+    public void addPropertyChangeListener(PropertyChangeListener listener);
+    public void removePropertyChangeListener(PropertyChangeListener listener);
 
-    private final DecoderListener decoderListener = new DecoderListener() {
-
-        @Override
-        public void connected(Decoder source) {
-        }
-
-        @Override
-        public void disconnected(String reason, Decoder source) {
-        }
-
-        @Override
-        public void recived(DecoderMessage message, Decoder source) {
-            messages.put(source, message);
-            if(message.getCommand() == DecoderMessage.Command.Passing){
-                Lap lap = MessageConverter.toLap(message);
-                lapManager.add(lap);
-            }
-        }
-
-        @Override
-        public void transmitted(DecoderMessage message, Decoder source) {
-            messages.put(source, message);
-        }
-
-        @Override
-        public void receivedCorruptData(Integer from, Integer start, String hexData, Decoder source) {
-        }
-    };
+    public List<DecoderMessage> getCurrentMessages(Decoder decoder);
+    public List<Decoder> getAttacedDecoders();
     
-            
-    public DecoderMessageManager() {
-        this.lapManager = Lookup.getDefault().lookup(LapManager.class);
-    }
-    
-    
-    public void attach(Decoder decoder){
-        decoder.register(decoderListener);
-    }
-    
-    public void detach(Decoder decoder){
-        decoder.unregister(decoderListener);
-    }
-    
-    
-    
-    public void addPropertyChangeListener(PropertyChangeListener listener){
-        pcs.addPropertyChangeListener(listener);
-    }    
-    
-    public void removePropertyChangeListener(PropertyChangeListener listener){
-        pcs.removePropertyChangeListener(listener);
-    }
-
-    public List<DecoderMessage> getCurrentMessages(Decoder decoder) {
-        return messages.get(decoder);
-    }
 }

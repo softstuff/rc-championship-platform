@@ -1,13 +1,21 @@
 package rc.championship.decoder.mylaps.emulator;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.StringWriter;
 import java.nio.channels.SocketChannel;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonWriter;
+import org.openide.util.Exceptions;
 import org.openide.util.WeakListeners;
 import org.openide.windows.IOProvider;
 import rc.championship.api.services.decoder.DecoderEmulator;
@@ -15,21 +23,20 @@ import rc.championship.api.services.decoder.DecoderListener;
 import rc.championship.api.services.decoder.DecoderMessage;
 import rc.championship.api.util.NbLogger;
 
-
-public class MyLapsDecoderEmulator implements DecoderEmulator  {
+public class MyLapsDecoderEmulator implements DecoderEmulator {
 
     private static final NbLogger LOG = NbLogger.getEmulatorLogger(DecoderServer.class);
-    
-    private boolean playing;
+
     private boolean paused;
-        
+    private File playing;
+
     private final Executor executor = Executors.newCachedThreadPool();
-    
+
     private DecoderServer decoderServer;
     private final List<TransferListener> transferListeners = new CopyOnWriteArrayList<>();
     private final List<ClientConnection> clients = new CopyOnWriteArrayList<>();
     private final List<DecoderListener> listeners = new CopyOnWriteArrayList<>();
-    
+
     private final TransferListener transferListener = new TransferListener() {
 
         @Override
@@ -58,30 +65,29 @@ public class MyLapsDecoderEmulator implements DecoderEmulator  {
         }
 
     };
-    
+
     private final ServerListener serverListener = new ServerListener() {
 
-            @Override
-            public void newClient(SocketChannel socketChannel) {
-                ClientConnection clientConnection = new ClientConnection(socketChannel, transferListeners);
-                clients.add(clientConnection);
-                clientConnection.startThreads(executor);
-                log("new client connected %s", clientConnection);
-            }
+        @Override
+        public void newClient(SocketChannel socketChannel) {
+            ClientConnection clientConnection = new ClientConnection(socketChannel, transferListeners);
+            clients.add(clientConnection);
+            clientConnection.startThreads(executor);
+            log("new client connected %s", clientConnection);
+        }
 
-            @Override
-            public void serverError(Exception ex) {
-                log("emulator server crashed %s", ex.getMessage());
-                
-            }
+        @Override
+        public void serverError(Exception ex) {
+            log("emulator server crashed %s", ex.getMessage());
 
-            @Override
-            public void shutdown() {
-                log("emulator shutdown");
-            }
-        };
-    
-    
+        }
+
+        @Override
+        public void shutdown() {
+            log("emulator shutdown");
+        }
+    };
+
     @Override
     public void register(DecoderListener listener) {
         log("register");
@@ -96,16 +102,16 @@ public class MyLapsDecoderEmulator implements DecoderEmulator  {
 
     @Override
     public void send(DecoderMessage... messages) {
-        if(!isStarted()){
+        if (!isStarted()) {
             throw new IllegalStateException("Emulator is not started yet");
         }
-        if(messages == null || clients.isEmpty()){
+        if (messages == null || clients.isEmpty()) {
             return;
         }
-        for(DecoderMessage msg : messages){
-            clients.forEach(client->client.send(msg));
+        for (DecoderMessage msg : messages) {
+            clients.forEach(client -> client.send(msg));
         }
-        
+
         log("send");
     }
 
@@ -116,9 +122,9 @@ public class MyLapsDecoderEmulator implements DecoderEmulator  {
     }
 
     @Override
-    public void startDecoder(String host, int port)throws IOException {
+    public void startDecoder(String host, int port) throws IOException {
         log("startEmulator");
-        if(isStarted()){
+        if (isStarted()) {
             throw new IllegalStateException("emulatorServer is running");
         }
         decoderServer = new DecoderServer(serverListener);
@@ -129,32 +135,34 @@ public class MyLapsDecoderEmulator implements DecoderEmulator  {
     @Override
     public void stopDecoder() {
         log("stopEmulator");
-        clients.forEach(client->client.close());
-        decoderServer.shutdown();        
+        clients.forEach(client -> client.close());
+        decoderServer.shutdown();
     }
 
     @Override
-    public void play(OutputStream output) {
-        if(!isStarted()){
+    public void play(File file) {
+        if (!isStarted()) {
             throw new IllegalStateException("Server is not started");
         }
-        if(clients.isEmpty()){
+        if (clients.isEmpty()) {
             throw new IllegalStateException("No clients is conncted");
         }
         log("play");
-        playing = true;
+        playing = file;
+        executor.execute(() -> doPlayback());
+
     }
 
     @Override
     public void stopPlaying() {
         log("stop");
-        playing = false;
+        playing = null;
     }
 
     @Override
     public boolean isPlaying() {
         log("isPlaying");
-        return playing;
+        return playing != null;
     }
 
     @Override
@@ -174,10 +182,47 @@ public class MyLapsDecoderEmulator implements DecoderEmulator  {
         log("isPaused");
         return paused;
     }
-    
-    private void log(String format, Object ... args){
-        String msg = String.format(format, args);        
-        IOProvider.getDefault().getIO("MyLaps emulator", false).getOut().println(msg);        
+
+    private void log(String format, Object... args) {
+        String msg = String.format(format, args);
+        IOProvider.getDefault().getIO("MyLaps emulator", false).getOut().println(msg);
     }
 
+    private void doPlayback() {
+        try {
+            JsonReader jsonReader = Json.createReader(new FileReader(playing));
+            JsonArray data = jsonReader.readArray();
+            for (int i = 0; i < data.size(); i++) {
+                JsonObject row = data.getJsonObject(i);
+                final String jsonData;
+                if (row.containsKey("delay")) {
+                    int delay = row.getInt("delay");
+                    JsonObject jsonObject = row.getJsonObject("data");
+                    jsonData = serialize(jsonObject);
+                    Thread.sleep(delay);
+                } else {
+                    jsonData = serialize(row);
+                }
+                DecoderMessage msg = new DecoderMessage(jsonData);
+                send(msg);
+
+            };
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (InterruptedException ex) {
+            Exceptions.printStackTrace(ex);
+        } finally {
+            playing = null;
+        }
+    }
+
+    String serialize(JsonObject object) throws IOException {
+        try (StringWriter sw = new StringWriter();
+                JsonWriter writer = Json.createWriter(sw)) {
+            writer.writeObject(object);
+            writer.close();
+            sw.flush();
+            return sw.toString();
+        }
+    }
 }

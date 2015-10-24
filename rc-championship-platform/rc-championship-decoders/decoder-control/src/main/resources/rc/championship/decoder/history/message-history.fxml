@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="752.0" prefWidth="1312.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rc.championship.decoder.history.MessageHistoryViewController">
+    <stylesheets>
+        <URL value="@message-history.css" />
+    </stylesheets>
+   <children>
+      <Accordion layoutX="8.0" layoutY="7.0">
+        <panes>
+          <TitledPane animated="false" prefHeight="83.0" prefWidth="1455.0" text="Filter">
+               <content>
+                  <GridPane prefHeight="54.0" prefWidth="1164.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button fx:id="filterButton" mnemonicParsing="false" onAction="#onFilterButton" text="Filter" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                     </children>
+                  </GridPane>
+               </content>
+            </TitledPane>
+        </panes>
+      </Accordion>
+      <AnchorPane layoutY="153.0" prefHeight="598.0" prefWidth="1305.0">
+         <children>
+            <TreeTableView fx:id="treeTableView" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="598.0" prefWidth="1455.0">
+              <columns>
+                <TreeTableColumn fx:id="columnId" prefWidth="75.0" text="Id" />
+                  <TreeTableColumn fx:id="columnTime" prefWidth="75.0" text="Time" />
+                <TreeTableColumn fx:id="columnType" prefWidth="119.0" text="Type" />
+              </columns>
+            </TreeTableView>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

@@ -1,6 +1,5 @@
 package rc.championship.decoder.mylaps;
 
-import rc.championship.decoder.mylaps.client.MyLapsDecoderConnector;
 import org.openide.util.lookup.ServiceProvider;
 import rc.championship.api.model.Decoder;
 import rc.championship.api.services.decoder.DecoderConnectionFactory;
@@ -23,7 +22,7 @@ public class MyLapConnectionFactory implements DecoderConnectionFactory {
 
     @Override
     public DecoderConnector createConnector(Decoder decoder) {
-         return new MyLapsDecoderConnector(decoder);
+         return null;//new MyLapsDecoderConnector(decoder);
     }
     
     @Override

@@ -1,88 +1,113 @@
 package rc.championship.practies;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Collection;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
+import org.openide.LifecycleManager;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
-import rc.championship.api.services.decoder.TrackConnector;
-import rc.championship.api.services.decoder.TrackConnectorFactory;
+import rc.championship.api.model.Decoder;
+import rc.championship.api.services.LapManager;
+import rc.championship.api.services.decoder.DecoderServices;
 
 
-public class PractiesPresentationModel {
+public final class PractiesPresentationModel implements PropertyChangeListener {
     
-    private String host;
-    private String port;
+
+    public static final String PROP_DECODER = "decoder";
     
-    private TrackConnectorFactory selectedFactory;
-    private TrackConnector connector;
+    
+    private Decoder decoder;
+    private boolean decoderListNeedReload = true;
+    private final List<Decoder> allDecoders = new ArrayList<>();
+    private LapManager lapManager;
+    private DecoderServices decoderServices;
+    
+    private Logger log = Logger.getLogger(getClass().getName());
+    private transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     public PractiesPresentationModel() {
-        host = getHostName();
-        port = "5403";
-        Collection<? extends TrackConnectorFactory> allTrackConnectorFactories = getAllTrackConnectorFactories();
-        if(allTrackConnectorFactories != null && allTrackConnectorFactories.size() == 1){
-            selectedFactory = allTrackConnectorFactories.iterator().next();
-        }
+        
+        initDecoderServices();        
+        initLapManager();
+            
     }
     
+    private void initLapManager() {
+        this.lapManager = Lookup.getDefault().lookup(LapManager.class);
+        if(lapManager == null){
+            log.severe("Cannot get a LapManager object");
+            LifecycleManager.getDefault().exit();
+        }
+    }
+
+    private void initDecoderServices() {
+        decoderServices = Lookup.getDefault().lookup(DecoderServices.class);
+        
+        if(decoderServices == null){
+            Logger.getLogger(getClass().getName()).severe("failed to find DecoderServices object");
+            LifecycleManager.getDefault().exit();
+        }
+    }
+    public void startListsenForDecoderListChanges(){
+        decoderServices.addPropertyChangeListener(this);
+        reloadDecoderList();
+    }
     
-    private String getHostName() {
+    public void stopListsenForDecoderListChanges(){
+        decoderServices.removePropertyChangeListener(this);
+    }
+        
+
+    public Decoder getDecoder() {
+        return decoder;
+    }
+
+    public void setDecoder(Decoder decoder) {
+        Decoder oldDecoder = this.decoder;
+        this.decoder = decoder;
+        propertyChangeSupport.firePropertyChange(PROP_DECODER, oldDecoder, decoder);
+    }
+    
+    public List<Decoder> getAllDecoders(){
+        if(decoderListNeedReload){
+            reloadDecoderList();
+        }
+        return allDecoders;
+    }
+    
+    private void reloadDecoderList() {
         try {
-            InetAddress addr = InetAddress.getLocalHost();
-            return addr.getHostName();
-        } catch (UnknownHostException ex) {
+            allDecoders.clear();
+            allDecoders.addAll(decoderServices.getDecoders());
+            decoderListNeedReload = false;
+            
+        } catch (BackingStoreException ex) {
             Exceptions.printStackTrace(ex);
-            return "localhost";
         }
     }
     
-    
 
-    public TrackConnectorFactory getSelectedFactory() {
-        return selectedFactory;
-    }
-
-    public void setSelectedFactory(TrackConnectorFactory selectedFactory) {
-        this.selectedFactory = selectedFactory;
-    }
-    
-    public final Collection<? extends TrackConnectorFactory> getAllTrackConnectorFactories(){
-        Collection<? extends TrackConnectorFactory> factories = Lookup.getDefault().lookupAll(TrackConnectorFactory.class);
-        return factories;
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    public String getHost() {
-        return host;
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if(evt.getPropertyName().equals(DecoderServices.PROP_DECODER_LIST_CHANGED)){
+            decoderListNeedReload = true;
+        }
     }
 
-    public String getPort() {
-        return port;
+    boolean hasDecoder() {
+        return decoder != null;
     }
-
-    public void setPort(String port) {
-        this.port = port;
-    }
-
-    public TrackConnector getConnector() {
-        return connector;
-    }
-
-    public void setConnector(TrackConnector connector) {
-        this.connector = connector;
-    }
-    
-    TrackConnector connect() {
-        int portValue = Integer.parseInt(port);
-        return connector = selectedFactory.create(host, portValue);
-    }
-    
-    boolean isConnectorSelected(){
-        return connector != null;
-    }
-    
 }

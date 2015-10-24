@@ -1,17 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <databaseChangeLog 
-  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
-  <changeSet author="stefan" id="changelog-1.0-1">
-    <createTable tableName="Properties">
-      <column name="key" type="varchar(96)">
-        <constraints nullable="false" primaryKey="true"/>
-      </column>
-      <column name="val" type="varchar(96)">
-        <constraints nullable="false"/>
-      </column>
-    </createTable>
-  </changeSet>
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd"> 
+    <changeSet id="changelog-1.0-1" author="stefan">
+        <createTable tableName="Properties">
+            <column name="key" type="varchar(96)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="val" type="varchar(96)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+  
+    <changeSet id="changelog-1.0-2" author="stefan">
+        <createTable tableName="MessageHistory">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="time" type="int">
+                <constraints nullable="false"/>
+            </column>
+      
+            <column name="type" type="varchar(32)" />
+            <column name="command" type="varchar(32)" />
+            <column name="data" type="varchar(255)" />
+        </createTable>
+    </changeSet>
+  
+    <changeSet id="changelog-1.0-3" author="stefan">
+        <createTable tableName="LapHistory">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="time" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>      
+            <column name="transponder" type="int" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="decoder" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="number" type="int" />
+            <column name="hit" type="int" />
+            <column name="strength" type="int" />
+            <column name="temprature" type="double" />
+            <column name="voltage" type="double" />
+      
+        </createTable>
+    </changeSet>
 </databaseChangeLog>

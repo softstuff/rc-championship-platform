@@ -1,4 +1,4 @@
-package rc.championship.decoder.playback;
+package rc.championship.decoder.history;
 
 import java.awt.BorderLayout;
 import java.io.IOException;
@@ -10,83 +10,50 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javax.swing.ActionMap;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.util.Exceptions;
-import org.openide.util.Lookup;
-import org.openide.util.LookupEvent;
-import org.openide.util.LookupListener;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.Utilities;
 import org.openide.windows.TopComponent;
-import rc.championship.api.model.Decoder;
 
 /**
  * Top component which displays something.
  */
 @ConvertAsProperties(
-        dtd = "-//rc.championship.decoder.playback//DecoderPlayback//EN",
+        dtd = "-//rc.championship.decoder.history//DecoderMessageHistory//EN",
         autostore = false
 )
 @TopComponent.Description(
-        preferredID = DecoderPlaybackTopComponent.IDENTIFIER,
-        //iconBase="SET/PATH/TO/ICON/HERE", 
+        preferredID = "DecoderMessageHistoryTopComponent",
+        iconBase = "rc/championship/decoder/history/database.png",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
-@TopComponent.Registration(mode = "output", openAtStartup = true)
-@ActionID(category = "Window", id = "rc.championship.decoder.playback.DecoderPlaybackTopComponent")
+@TopComponent.Registration(mode = "editor", openAtStartup = true)
+@ActionID(category = "Window", id = "rc.championship.decoder.history.DecoderMessageHistoryTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_DecoderPlaybackAction",
-        preferredID = "DecoderPlaybackTopComponent"
+        displayName = "#CTL_DecoderMessageHistoryAction",
+        preferredID = "DecoderMessageHistoryTopComponent"
 )
 @Messages({
-    "CTL_DecoderPlaybackAction=DecoderPlayback",
-    "CTL_DecoderPlaybackTopComponent=DecoderPlayback Window",
-    "HINT_DecoderPlaybackTopComponent=This is a DecoderPlayback window",
-    "isConnected=Connected",
-    "isDisconnected=Disconnected",
-    "isPlaying=Playing",
-    "StatusDisconnected=Disconnected",
-    "ActionDisconnect=Disconnect",
-    "StatusConnected=Connected",
-    "ActionConnect=Connect",
-    "NoPlayerForThisDecoderWasFound=No player for this decoder was found",
-    "IsPlayingFromFile=Is playing from file" 
+    "CTL_DecoderMessageHistoryAction=DecoderMessageHistory",
+    "CTL_DecoderMessageHistoryTopComponent=DecoderMessageHistory Window",
+    "HINT_DecoderMessageHistoryTopComponent=This is a DecoderMessageHistory window"
 })
-public final class DecoderPlaybackTopComponent extends TopComponent implements LookupListener{
-    public static final String IDENTIFIER = "DecoderPlaybackTopComponent";
-    
+public final class DecoderMessageHistoryTopComponent extends TopComponent {
+
     private final Logger log = Logger.getLogger(getClass().getName());
-    private final Lookup.Result<Decoder> lookupResult;
     
     private JFXPanel fxPanel;
-    private MessageListViewController fxController;
-
-    public DecoderPlaybackTopComponent() {
-        
-                
-        lookupResult = Utilities.actionsGlobalContext().lookupResult(Decoder.class);
-        
+    private MessageHistoryViewController fxController;
+    
+    public DecoderMessageHistoryTopComponent() {
         initComponents();
-        setName(Bundle.CTL_DecoderPlaybackTopComponent());
-        setToolTipText(Bundle.HINT_DecoderPlaybackTopComponent());
-                
-        ActionMap map = this.getActionMap ();
-//        map.put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(manager));
-//        map.put(DefaultEditorKit.cutAction, ExplorerUtils.actionCut(manager));
-//        map.put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(manager));
-//        map.put("delete", ExplorerUtils.actionDelete(manager, true)); // or false
-
-        // following line tells the top component which lookup should be associated with it
-//        associateLookup (ExplorerUtils.createLookup (manager, map));   
-        
-        setLayout(new BorderLayout());
+        setName(Bundle.CTL_DecoderMessageHistoryTopComponent());
+        setToolTipText(Bundle.HINT_DecoderMessageHistoryTopComponent());
         init();
     }
-    
     
     private void init() {
         fxPanel = new JFXPanel();
@@ -98,7 +65,7 @@ public final class DecoderPlaybackTopComponent extends TopComponent implements L
     
     private void createScene() {
         try {
-            URL location = getClass().getResource("MessageListView.fxml");
+            URL location = getClass().getResource("message-history.fxml");
             FXMLLoader loader = new FXMLLoader(location);
             Parent root = (Parent) loader.load();
             fxController = loader.getController();
@@ -114,22 +81,10 @@ public final class DecoderPlaybackTopComponent extends TopComponent implements L
 //            Parent root = fxmlLoader.load(location);
             Scene scene = new Scene(root, Color.LIGHTBLUE);
             fxPanel.setScene(scene);
-//            fxController = fxmlLoader.getController();               
-            fxController.setDecoders(lookupResult.allInstances());
+//            fxController = fxmlLoader.getController();
         } catch(IOException ex){
             Exceptions.printStackTrace(ex);
         }
-    }
-
-    
-    @Override
-    protected void componentActivated() {
-        lookupResult.removeLookupListener(this);
-    }
-    
-    @Override
-    protected void componentDeactivated() {
-        lookupResult.addLookupListener(this);
     }
 
     /**
@@ -144,11 +99,11 @@ public final class DecoderPlaybackTopComponent extends TopComponent implements L
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 751, Short.MAX_VALUE)
+            .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 471, Short.MAX_VALUE)
+            .addGap(0, 300, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -156,12 +111,12 @@ public final class DecoderPlaybackTopComponent extends TopComponent implements L
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        lookupResult.addLookupListener(this);
+        // TODO add custom code on component opening
     }
 
     @Override
     public void componentClosed() {
-        lookupResult.removeLookupListener(this);
+        // TODO add custom code on component closing
     }
 
     void writeProperties(java.util.Properties p) {
@@ -175,14 +130,4 @@ public final class DecoderPlaybackTopComponent extends TopComponent implements L
         String version = p.getProperty("version");
         // TODO read your settings according to their version
     }
-
-
-    @Override
-    public void resultChanged(LookupEvent ev) {        
-        log.info("resultChanged");
-        if(fxController != null){
-            fxController.setDecoders(lookupResult.allInstances());
-        }
-    }
-    
 }

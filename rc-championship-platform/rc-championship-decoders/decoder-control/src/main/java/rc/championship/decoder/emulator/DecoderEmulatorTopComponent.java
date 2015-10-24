@@ -3,8 +3,6 @@ package rc.championship.decoder.emulator;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
@@ -474,12 +472,12 @@ public final class DecoderEmulatorTopComponent extends TopComponent {
 
     private void playFilePlayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playFilePlayButtonActionPerformed
 
-        try {
+//        try {
             File file = new File(playFileTextField.getText());
-            emulator.play(new FileOutputStream(file));
-        } catch (FileNotFoundException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+            emulator.play(file);
+//        } catch (IOException ex) {
+//            Exceptions.printStackTrace(ex);
+//        }
 
     }//GEN-LAST:event_playFilePlayButtonActionPerformed
 

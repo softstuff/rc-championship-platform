@@ -10,7 +10,7 @@ import rc.championship.api.model.Decoder;
 public interface DecoderListener extends EventListener{
     void connected(Decoder source);
     void disconnected(String reason, Decoder source);
-    void recived(DecoderMessage message, Decoder source);
-    void transmitted(DecoderMessage message, Decoder source);
+    void recived(DecoderMessage message);
+    void transmitted(DecoderMessage message);
     void receivedCorruptData(Integer from, Integer start, String hexData, Decoder source);
 }

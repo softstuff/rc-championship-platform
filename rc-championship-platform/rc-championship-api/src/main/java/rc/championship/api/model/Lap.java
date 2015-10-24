@@ -9,6 +9,7 @@ import java.util.Optional;
  */
 public class Lap {
 
+    private Optional<Long> id;
     private Optional<Long> number;
     private Optional<Date> time;
     private Optional<Long> strength;
@@ -22,6 +23,16 @@ public class Lap {
     public Lap() {
     }
 
+    public Optional<Long> getId() {
+        return id;
+    }
+
+    public void setId(Optional<Long> id) {
+        this.id = id;
+    }
+
+    
+    
     public Optional<Long> getNumber() {
         return number;
     }
