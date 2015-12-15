@@ -6,7 +6,7 @@ import java.io.OutputStream;
  */
 public interface DecoderRecorder {
     
-    void startRecording(OutputStream recording, DecoderConnection connection, DecoderRecorderFilter recivedFilter, DecoderRecorderFilter transmittedFilter);
+    void startRecording(OutputStream recording, DecoderPlayer player, DecoderRecorderFilter recivedFilter, DecoderRecorderFilter transmittedFilter);
     
     void stopRecording();
     

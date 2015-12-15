@@ -84,9 +84,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="portValue">
       <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="rc/championship/decoder/explorer/Bundle.properties" key="AddDecoderPanel.portValue.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
-        </Property>
+        <Property name="text" type="java.lang.String" value="5403" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="typeLabel">

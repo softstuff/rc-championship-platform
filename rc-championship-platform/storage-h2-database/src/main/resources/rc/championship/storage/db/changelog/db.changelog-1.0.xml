@@ -20,7 +20,7 @@
             <column name="id" type="int" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="time" type="int">
+            <column name="time" type="long">
                 <constraints nullable="false"/>
             </column>
       
@@ -35,7 +35,7 @@
             <column name="id" type="int" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="time" type="TIMESTAMP">
+            <column name="time" type="long">
                 <constraints nullable="false"/>
             </column>      
             <column name="transponder" type="int" >

@@ -352,7 +352,7 @@ public final class DecoderStatusTopComponent extends TopComponent {
         if(decoder != null ){       
             if(decoder.isConnected()){
                 appendDecoderLog(NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.ClickDisconnect"));
-                decoder.disconnect();
+                decoder.disconnect("User selected");
             } else {
                 appendDecoderLog(NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.ClickConnect"));
                 try{

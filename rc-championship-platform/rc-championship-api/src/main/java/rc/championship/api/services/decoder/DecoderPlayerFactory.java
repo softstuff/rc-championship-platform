@@ -15,4 +15,6 @@ public interface DecoderPlayerFactory {
     public boolean canHandle(Decoder decoder);
     
     public DecoderPlayer createPlayer(Decoder decoder);
+
+    public String getDecoderName();
 }

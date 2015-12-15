@@ -11,7 +11,7 @@ import java.util.prefs.Preferences;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 import rc.championship.api.model.Decoder;
-import rc.championship.api.services.decoder.DecoderConnectionFactory;
+import rc.championship.api.services.decoder.DecoderPlayerFactory;
 import rc.championship.api.services.decoder.DecoderServices;
 
 @ServiceProvider(service = DecoderServices.class)
@@ -74,7 +74,7 @@ public class DecoderServicesImpl implements DecoderServices{
         String host = savedDecoder.get("host", "");
         int port = savedDecoder.getInt("port", 0);
         String decoderName = savedDecoder.get("decoderName", "");
-        Optional<DecoderConnectionFactory> factory = getFactoryFor(decoderName);
+        Optional<DecoderPlayerFactory> factory = getFactoryFor(decoderName);
         return new Decoder(host, port, decoderName, factory, savedDecoder.name());
     }
     private void store(Decoder decoder) throws BackingStoreException{
@@ -102,9 +102,9 @@ public class DecoderServicesImpl implements DecoderServices{
     
     
 
-    private Optional<DecoderConnectionFactory> getFactoryFor(String decoderName) {
-        Collection<? extends DecoderConnectionFactory> factories = Lookup.getDefault().lookupAll(DecoderConnectionFactory.class);
-        for(DecoderConnectionFactory factory : factories) {
+    private Optional<DecoderPlayerFactory> getFactoryFor(String decoderName) {
+        Collection<? extends DecoderPlayerFactory> factories = Lookup.getDefault().lookupAll(DecoderPlayerFactory.class);
+        for(DecoderPlayerFactory factory : factories) {
             if(factory.getDecoderName().equalsIgnoreCase(decoderName)){
                 return Optional.of(factory);
             }

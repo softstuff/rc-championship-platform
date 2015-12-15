@@ -1,7 +1,7 @@
 package rc.championship.decoder.mylaps;
 
 import eu.plib.P3tools.MsgProcessor;
-import eu.plib.P3tools.data.msg.v2.Time;
+import eu.plib.P3tools.data.msg.Time;
 import eu.plib.Ptools.Message;
 import java.nio.ByteBuffer;
 import java.util.Date;
@@ -57,6 +57,5 @@ public class P3Converter {
                 dataToSend.set("decoderId", "0"+decoderId);
             }
         }
-        
     }
 }

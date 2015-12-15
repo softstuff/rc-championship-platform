@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import rc.championship.api.services.decoder.DecoderConnectionFactory;
-import rc.championship.api.services.decoder.DecoderConnector;
+import rc.championship.api.services.decoder.DecoderPlayerFactory;
 import rc.championship.api.services.decoder.DecoderListener;
 import rc.championship.api.services.decoder.DecoderMessage;
+import rc.championship.api.services.decoder.DecoderPlayer;
 
 /**
  *
@@ -25,17 +25,17 @@ public class Decoder {
     private Integer port;
     private Integer id;
     private String decoderName;
-    private Optional<DecoderConnectionFactory> connectorFactory;
+    private Optional<DecoderPlayerFactory> playerFactory;
     private String identifyer;
-    private DecoderConnector connector;
+    private DecoderPlayer player;
 
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-    public Decoder(String host, int port, String decoderName, Optional<DecoderConnectionFactory> connectorFactory, String identifyer) {
+    public Decoder(String host, int port, String decoderName, Optional<DecoderPlayerFactory> connectorFactory, String identifyer) {
         this.host = host;
         this.port = port;
         this.decoderName = decoderName;
-        this.connectorFactory = connectorFactory;
+        this.playerFactory = connectorFactory;
         this.identifyer = identifyer;
     }
 
@@ -91,12 +91,12 @@ public class Decoder {
         }
     }
 
-    public Optional<DecoderConnectionFactory> getConnectorFactory() {
-        return connectorFactory;
+    public Optional<DecoderPlayerFactory> getPlayerFactory() {
+        return playerFactory;
     }
 
-    public void setConnectorFactory(Optional<DecoderConnectionFactory> connectorFactory) {
-        this.connectorFactory = connectorFactory;
+    public void setPlayerFactory(Optional<DecoderPlayerFactory> playerFactory) {
+        this.playerFactory = playerFactory;
     }
 
     public String getIdentifyer() {
@@ -130,32 +130,32 @@ public class Decoder {
     }
 
     public void register(DecoderListener listener) {
-        createConnectorIfNeeded();
-        connector.register(listener);
+        createPlayerIfNeeded();
+        player.register(listener);
     }
 
     public void unregister(DecoderListener listener) {
-        createConnectorIfNeeded();
-        connector.unregister(listener);
+        createPlayerIfNeeded();
+        player.unregister(listener);
     }
 
     public void connect() throws IOException {
-        createConnectorIfNeeded();
-        if (connector.isConnected()) {
+        createPlayerIfNeeded();
+        if (player.isConnected()) {
             return;
         }
-        connector.connect();
+        player.connect();
 
     }
 
-    private void createConnectorIfNeeded() throws IllegalStateException {
-        if (connector == null) {
+    private void createPlayerIfNeeded() throws IllegalStateException {
+        if (player == null) {
 
-            if (connectorFactory == null || !connectorFactory.isPresent()) {
+            if (playerFactory == null || !playerFactory.isPresent()) {
                 throw new IllegalStateException("Unknown decoder implementation: " + decoderName);
             }
-            connector = connectorFactory.get().createConnector(this);
-            if (connector == null) {
+            player = playerFactory.get().createPlayer(this);
+            if (player == null) {
                 throw new IllegalStateException("Can not connect to decoder, no valid connector was found for " + decoderName);
             }
         }
@@ -163,12 +163,12 @@ public class Decoder {
     }
 
     public boolean isConnected() {
-        return connector != null ? connector.isConnected() : false;
+        return player != null ? player.isConnected() : false;
     }
 
-    public void disconnect() {
-        if (connector != null) {
-            connector.disconnect();
+    public void disconnect(String reason) {
+        if (player != null) {
+            player.disconnect(reason);
         }
     }
 
@@ -181,7 +181,7 @@ public class Decoder {
         if(!isConnected()){
             throw new IllegalStateException("Can not send message, decoder has no active connection");
         }
-        connector.send(msg, timeout, timeUnit);
+        player.send(msg, timeout, timeUnit);
     }
 
     public String getDisplayName() {

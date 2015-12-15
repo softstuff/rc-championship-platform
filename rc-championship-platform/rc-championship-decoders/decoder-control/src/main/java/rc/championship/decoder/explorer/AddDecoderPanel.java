@@ -8,7 +8,7 @@ import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import org.openide.util.Lookup;
 import rc.championship.api.model.Decoder;
-import rc.championship.api.services.decoder.DecoderConnectionFactory;
+import rc.championship.api.services.decoder.DecoderPlayerFactory;
 
 /**
  *
@@ -21,7 +21,7 @@ public class AddDecoderPanel extends javax.swing.JPanel {
      */
     public AddDecoderPanel() {
         initComponents();
-        Collection<? extends DecoderConnectionFactory> factories = Lookup.getDefault().lookupAll(DecoderConnectionFactory.class);
+        Collection<? extends DecoderPlayerFactory> factories = Lookup.getDefault().lookupAll(DecoderPlayerFactory.class);
         factories.forEach( factory -> factoryComboBox.addItem(factory));
         if(!factories.isEmpty()){
             factoryComboBox.setSelectedIndex(0);
@@ -31,8 +31,8 @@ public class AddDecoderPanel extends javax.swing.JPanel {
             @Override
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if(value instanceof DecoderConnectionFactory){
-                    DecoderConnectionFactory factory = (DecoderConnectionFactory)value;
+                if(value instanceof DecoderPlayerFactory){
+                    DecoderPlayerFactory factory = (DecoderPlayerFactory)value;
                     setText(factory.getDecoderName());
                 } 
                 return component;
@@ -45,7 +45,7 @@ public class AddDecoderPanel extends javax.swing.JPanel {
     public Decoder createDecoder(){
         String sPort = portValue.getText();
         int port = Integer.valueOf(sPort);
-        DecoderConnectionFactory factory = (DecoderConnectionFactory)factoryComboBox.getSelectedItem();
+        DecoderPlayerFactory factory = (DecoderPlayerFactory)factoryComboBox.getSelectedItem();
         return new Decoder(
                 hostValue.getText(),
                 port, 
@@ -74,7 +74,7 @@ public class AddDecoderPanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(portLabel, org.openide.util.NbBundle.getMessage(AddDecoderPanel.class, "AddDecoderPanel.portLabel.text")); // NOI18N
 
-        portValue.setText(org.openide.util.NbBundle.getMessage(AddDecoderPanel.class, "AddDecoderPanel.portValue.text")); // NOI18N
+        portValue.setText("5403"); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(typeLabel, org.openide.util.NbBundle.getMessage(AddDecoderPanel.class, "AddDecoderPanel.typeLabel.text")); // NOI18N
 

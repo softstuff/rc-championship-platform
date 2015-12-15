@@ -7,10 +7,15 @@ import rc.championship.api.services.decoder.DecoderPlayerFactory;
 
 @ServiceProvider(service = DecoderPlayerFactory.class)
 public class MyLapsDecoderPlayerFactory implements DecoderPlayerFactory{
+
+    @Override
+    public String getDecoderName() {
+        return "MyLaps";
+    }
     
     @Override
     public boolean canHandle(Decoder decoder){
-        return decoder.getDecoderName().equalsIgnoreCase("mylaps");
+        return decoder.getDecoderName().equalsIgnoreCase(getDecoderName());
     }
     
     @Override

@@ -6,6 +6,7 @@ import java.io.IOException;
 /**
  *
  * @author Stefan
+ * @deprecated 
  */
 public interface DecoderEmulator {
     
