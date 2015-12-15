@@ -2,6 +2,7 @@ package rc.championship.decoder.status;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -89,6 +90,20 @@ public final class DecoderStatusTopComponent extends TopComponent {
         public void transmitted(DecoderMessage message) {
             appendDecoderLog(NbBundle.getMessage(DecoderStatusTopComponent.class, "DecoderStatusTopComponent.TransmittMsg", message, message.getDecoder()));
         }
+
+        @Override
+        public void playbackStarted(Decoder source, File file) {
+            appendDecoderLog("Playback stared");
+        }
+        
+        @Override
+        public void playbackEnded(Decoder source, File file) {
+            appendDecoderLog("Playback ended");
+        }
+
+        
+        
+        
     };
     
     

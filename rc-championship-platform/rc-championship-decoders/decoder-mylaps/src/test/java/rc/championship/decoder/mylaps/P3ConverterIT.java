@@ -1,5 +1,6 @@
-package rc.championship.decoder.mylaps.emulator;
+package rc.championship.decoder.mylaps;
 
+import rc.championship.decoder.mylaps.P3Converter;
 import eu.plib.P3tools.data.msg.v2.Time;
 import eu.plib.Ptools.Message;
 import java.nio.ByteBuffer;

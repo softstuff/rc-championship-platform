@@ -12,5 +12,6 @@
     <modules>
         <module>decoder-mylaps</module>
         <module>decoder-control</module>
+        <module>lap-publisher</module>
     </modules>
 </project>

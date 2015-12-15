@@ -15,6 +15,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonWriter;
 import org.openide.util.Exceptions;
+import rc.championship.api.model.Decoder;
 import rc.championship.api.services.decoder.DecoderListener;
 import rc.championship.api.services.decoder.DecoderMessage;
 
@@ -28,8 +29,10 @@ public class FileStreamingDecoderConnection implements DecoderConnection {
     private final File file;
     private final Collection<DecoderListener> listeners;
     private boolean playing;
+    private Decoder decoder;
 
-    public FileStreamingDecoderConnection(File file, Collection<DecoderListener> listeners) {
+    public FileStreamingDecoderConnection(Decoder decoder, File file, Collection<DecoderListener> listeners) {
+        this.decoder = decoder;
         this.file = file;
         this.listeners = listeners;
     }    
@@ -60,6 +63,9 @@ public class FileStreamingDecoderConnection implements DecoderConnection {
     
     
     private void doPlayback() {
+        listeners.forEach(listener->{
+            listener.playbackStarted(decoder, file);
+        });
         try (JsonReader jsonReader = Json.createReader(new FileReader(file))){
             JsonArray data = jsonReader.readArray();
             for (int i = 0; i < data.size(); i++) {
@@ -81,13 +87,17 @@ public class FileStreamingDecoderConnection implements DecoderConnection {
                     
                 DecoderMessage msg = new DecoderMessage(jsonData);
                 fireMsgRecived(msg);
-
-            };
+            }
+            
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         } catch (InterruptedException ex) {
             Exceptions.printStackTrace(ex);
-        } 
+        } finally{
+            listeners.forEach(listener->{
+                listener.playbackEnded(decoder, file);
+            });
+        }
     }
 
     String serialize(JsonObject object) throws IOException {

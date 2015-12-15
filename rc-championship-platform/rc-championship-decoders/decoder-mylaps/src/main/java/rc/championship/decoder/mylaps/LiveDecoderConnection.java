@@ -18,7 +18,6 @@ import org.apache.commons.io.IOUtils;
 import rc.championship.api.model.Decoder;
 import rc.championship.api.services.decoder.DecoderListener;
 import rc.championship.api.services.decoder.DecoderMessage;
-import rc.championship.decoder.mylaps.emulator.P3Converter;
 
 /**
  *
@@ -73,7 +72,7 @@ public class LiveDecoderConnection implements DecoderConnection {
     @Override
     public void connect(ExecutorService service) throws IOException {
         if (channel != null) {
-            throw new IllegalStateException("Still has a channel");
+            channel.close();
         }
         
         channel = SocketChannel.open();

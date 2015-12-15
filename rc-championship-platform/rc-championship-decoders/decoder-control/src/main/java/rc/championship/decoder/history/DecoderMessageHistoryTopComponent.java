@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -27,7 +28,7 @@ import org.openide.windows.TopComponent;
 @TopComponent.Description(
         preferredID = "DecoderMessageHistoryTopComponent",
         iconBase = "rc/championship/decoder/history/database.png",
-        persistenceType = TopComponent.PERSISTENCE_ALWAYS
+        persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = true)
 @ActionID(category = "Window", id = "rc.championship.decoder.history.DecoderMessageHistoryTopComponent")
@@ -47,11 +48,13 @@ public final class DecoderMessageHistoryTopComponent extends TopComponent {
     
     private JFXPanel fxPanel;
     private MessageHistoryViewController fxController;
+    private Scene scene;
     
     public DecoderMessageHistoryTopComponent() {
         initComponents();
         setName(Bundle.CTL_DecoderMessageHistoryTopComponent());
         setToolTipText(Bundle.HINT_DecoderMessageHistoryTopComponent());
+        setLayout(new BorderLayout());
         init();
     }
     
@@ -62,8 +65,37 @@ public final class DecoderMessageHistoryTopComponent extends TopComponent {
         Platform.runLater(()-> createScene());
     }
     
-    
-    private void createScene() {
+     private void createScene() {
+        try {
+            URL location = getClass().getResource("message-history.fxml");
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(location);
+            fxmlLoader.setBuilderFactory(new JavaFXBuilderFactory());
+ 
+            Parent root = (Parent) fxmlLoader.load(location.openStream());
+            scene = new Scene(root);
+            fxPanel.setScene(scene);
+            fxController = fxmlLoader.getController();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+     
+     /**
+   * force repaint by re-setting the scene
+   * This solves a repainting bug in JavaFx 1.8.05
+   */
+//  public void repaint(){
+//    fxPanel.setScene(null);
+//    Platform.runLater(new Runnable() {
+//      @Override
+//      public void run() {
+//        fxPanel.setScene(scene);
+//      }
+//    });
+//  }
+     
+    private void createScene2() {
         try {
             URL location = getClass().getResource("message-history.fxml");
             FXMLLoader loader = new FXMLLoader(location);
@@ -111,13 +143,20 @@ public final class DecoderMessageHistoryTopComponent extends TopComponent {
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
+//        repaint();
     }
 
     @Override
     public void componentClosed() {
         // TODO add custom code on component closing
     }
+
+    @Override
+    protected void componentShowing() {
+//        repaint();
+    }
+    
+    
 
     void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at

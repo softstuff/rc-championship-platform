@@ -110,13 +110,11 @@
         <module>rc-championship-practies</module>
         <module>rc-championship-api</module>
         <module>storage-h2-database</module>
-        <module>track-connector-mylaps</module>
-        <module>track-connector-mylaps-emulator</module>
         <module>rc-championship-decoders</module>
     </modules>
 
     <properties>
-        <netbeans.version>RELEASE80</netbeans.version>
+        <netbeans.version>RELEASE81</netbeans.version>
         <brandingToken>rcchampionshipplatform</brandingToken>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

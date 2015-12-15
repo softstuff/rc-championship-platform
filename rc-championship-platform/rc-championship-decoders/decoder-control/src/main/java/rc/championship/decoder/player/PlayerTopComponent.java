@@ -366,4 +366,11 @@ public final class PlayerTopComponent extends TopComponent implements LookupList
     public void receivedCorruptData(Integer from, Integer start, String hexData, Decoder source) {
     }
 
+    @Override
+    public void playbackStarted(Decoder source, File file) {
+    }
+
+    @Override
+    public void playbackEnded(Decoder source, File file) {
+    }
 }

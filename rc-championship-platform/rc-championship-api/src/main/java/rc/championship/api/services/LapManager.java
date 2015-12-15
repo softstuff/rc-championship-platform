@@ -10,6 +10,9 @@ import rc.championship.api.model.Lap;
  */
 public interface LapManager {
 
+    public static final String PROP_NEW_LAP = "newLap";
+    public static final String PROP_RESET_LAP_COUNTER = "resetLapCounter";
+    
     public Collection<? extends Lap> getLastLaps();
 
     void addPropertyChangeListener(PropertyChangeListener listener);

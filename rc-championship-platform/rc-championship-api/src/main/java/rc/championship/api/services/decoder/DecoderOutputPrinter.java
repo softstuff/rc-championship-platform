@@ -1,5 +1,6 @@
 package rc.championship.api.services.decoder;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
 import org.openide.windows.IOProvider;
@@ -50,4 +51,23 @@ public class DecoderOutputPrinter implements DecoderListener {
                         DateFormat.getTimeInstance().format(new Date())
                         , String.format(msg, args));
     }
+    
+    @Override
+    public void playbackStarted(Decoder decoder, File file) {
+        IOProvider.getDefault().getIO(decoder.getDisplayName(), false)
+                .getOut()
+                .format("%s - %s", 
+                        DateFormat.getTimeInstance().format(new Date())
+                        , String.format("Playback started of %s to %s", file.getAbsoluteFile(), decoder.getDisplayName()));
+    }
+
+    @Override
+    public void playbackEnded(Decoder decoder,File file) {
+        IOProvider.getDefault().getIO(decoder.getDisplayName(), false)
+                .getOut()
+                .format("%s - %s", 
+                        DateFormat.getTimeInstance().format(new Date())
+                        , String.format("Playback ended of %s to %s", file.getAbsoluteFile(), decoder.getDisplayName()));
+    }
+    
 }

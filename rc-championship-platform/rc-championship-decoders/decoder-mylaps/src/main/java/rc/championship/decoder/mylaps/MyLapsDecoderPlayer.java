@@ -28,9 +28,6 @@ class MyLapsDecoderPlayer implements DecoderPlayer{
     private final Set<DecoderListener> listeners = new HashSet<>();
     private DecoderConnection connection;
     
-    
-    
-    
     public MyLapsDecoderPlayer(Decoder decoder) {
         this.decoder = decoder;
         executor = Executors.newScheduledThreadPool(10);
@@ -59,9 +56,7 @@ class MyLapsDecoderPlayer implements DecoderPlayer{
             if(connection==null){
                 connection = new LiveDecoderConnection(decoder, listeners);
             }
-            connection.connect(executor);       
-            
-//            fireConnectedEvent();
+            connection.connect(executor);
     }
 
     @Override
@@ -88,7 +83,7 @@ class MyLapsDecoderPlayer implements DecoderPlayer{
         if(isConnected()){
             disconnect("Prepare for playing file");
         }
-        connection = new FileStreamingDecoderConnection(file, listeners);
+        connection = new FileStreamingDecoderConnection(decoder, file, listeners);
         connection.connect(executor);
         
     }

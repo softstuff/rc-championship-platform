@@ -23,6 +23,19 @@ public class Lap {
     public Lap() {
     }
 
+    public Lap(Optional<Long> id, Optional<Long> number, Optional<Date> time, Optional<Long> strength, Optional<Long> hit, Optional<Long> decoderId, Optional<Double> voltage, Optional<Double> temprature, Optional<Long> transponder) {
+        this.id = id;
+        this.number = number;
+        this.time = time;
+        this.strength = strength;
+        this.hit = hit;
+        this.decoderId = decoderId;
+        this.voltage = voltage;
+        this.temprature = temprature;
+        this.transponder = transponder;
+    }
+    
+
     public Optional<Long> getId() {
         return id;
     }

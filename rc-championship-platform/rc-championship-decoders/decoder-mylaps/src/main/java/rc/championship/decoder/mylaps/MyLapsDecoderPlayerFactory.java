@@ -2,11 +2,11 @@ package rc.championship.decoder.mylaps;
 
 import org.openide.util.lookup.ServiceProvider;
 import rc.championship.api.model.Decoder;
-import rc.championship.api.services.decoder.DecoderManager;
 import rc.championship.api.services.decoder.DecoderPlayer;
+import rc.championship.api.services.decoder.DecoderPlayerFactory;
 
-@ServiceProvider(service = DecoderManager.class)
-public class MyLapsDecoderManager extends DecoderManager{
+@ServiceProvider(service = DecoderPlayerFactory.class)
+public class MyLapsDecoderPlayerFactory implements DecoderPlayerFactory{
     
     @Override
     public boolean canHandle(Decoder decoder){

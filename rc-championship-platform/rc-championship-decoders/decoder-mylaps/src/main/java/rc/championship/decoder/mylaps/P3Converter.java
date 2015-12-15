@@ -1,4 +1,4 @@
-package rc.championship.decoder.mylaps.emulator;
+package rc.championship.decoder.mylaps;
 
 import eu.plib.P3tools.MsgProcessor;
 import eu.plib.P3tools.data.msg.v2.Time;

@@ -1,4 +1,4 @@
-package rc.championship.practies;
+package rc.championship.api.services.lap;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -10,9 +10,8 @@ import rc.championship.api.model.Lap;
 import rc.championship.api.services.LapManager;
 
 @ServiceProvider(service = LapManager.class)
-public final class PractiesLapManager implements LapManager {
-    private static final String PROP_NEW_LAP = "newLap";
-    private static final String PROP_RESET_LAP_COUNTER = "resetLapCounter";
+public final class LapManagerImpl implements LapManager {
+    
     
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
@@ -44,5 +43,4 @@ public final class PractiesLapManager implements LapManager {
     public void removePropertyChangeListener(PropertyChangeListener listener){
         pcs.removePropertyChangeListener(listener);
     }
-    
 }
