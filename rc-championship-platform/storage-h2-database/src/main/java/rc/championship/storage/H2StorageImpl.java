@@ -166,7 +166,7 @@ public class H2StorageImpl implements Storage {
                     Statement.RETURN_GENERATED_KEYS)){
                 int col = 1;
                 stmt.setLong(col++, lap.getDecoderId().get());
-                stmt.setTimestamp(col++, new Timestamp(lap.getTime().get().getTime()));
+                stmt.setLong(col++, lap.getTime().get().getTime());
                 stmt.setLong(col++, lap.getTransponder().get());
                 stmt.setLong(col++, lap.getNumber().get());
                 stmt.setLong(col++, lap.getHit().get());

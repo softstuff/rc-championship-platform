@@ -89,7 +89,7 @@ public class MessageHistoryViewController implements Initializable {
         ObservableList<TreeItem<StoredMessage>> children = treeTableView.getRoot().getChildren();
         children.clear();
         List<StoredMessage> history = storage.getMessagesAfter(0l, true, 1000);
-        history.forEach(msg -> children.add(new TreeItem<>(msg)));
+        history.forEach(msg -> children.add(0,new TreeItem<>(msg)));
     }
 
 }

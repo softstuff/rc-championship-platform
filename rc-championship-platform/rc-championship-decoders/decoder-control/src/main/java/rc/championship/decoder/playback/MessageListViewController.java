@@ -3,10 +3,19 @@ package rc.championship.decoder.playback;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
@@ -17,7 +26,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.FileChooser;
+import org.json.JSONObject;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
+import org.openide.util.NbPreferences;
 import rc.championship.api.model.Decoder;
 import rc.championship.api.services.decoder.DecoderManager;
 import rc.championship.api.services.decoder.DecoderMessage;
@@ -28,6 +40,8 @@ import rc.championship.api.services.decoder.DecoderMessage;
  * @author Stefan
  */
 public class MessageListViewController implements Initializable, PropertyChangeListener{
+    
+    private static final String LAST_HISTORY_EXPORT_FOLDER = "LastHistoryExportFolder";
 
     private final Logger log = Logger.getLogger(getClass().getName());
     private DecoderManager decoderManager;
@@ -65,8 +79,7 @@ public class MessageListViewController implements Initializable, PropertyChangeL
         assert tableView != null : "fx:id=\"tableView\" was not injected: check your FXML file 'MessageListView.fxml'.";
         
         
-        rows = tableView.getItems();
-        rows.add(new DecoderMsgRowModel("10", "test", "json"));        
+        rows = tableView.getItems();     
         
         decoderManager = Lookup.getDefault().lookup(DecoderManager.class);
         if(decoderManager == null){
@@ -81,12 +94,20 @@ public class MessageListViewController implements Initializable, PropertyChangeL
     private void loadButton(ActionEvent event){
         log.fine("loadButton "+event);
         FileChooser fileChooser = new FileChooser();
+        
+        String lastPath = NbPreferences.forModule(getClass()).get(LAST_HISTORY_EXPORT_FOLDER, System.getProperty("user.home"));
+        if(Files.exists(Paths.get(lastPath))) {
+            File lastFolder = Paths.get(lastPath).toFile();
+            fileChooser.setInitialDirectory(lastFolder);
+        }
+        fileChooser.setInitialFileName("history.dmh");
         fileChooser.setTitle("Load decoder history");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Decoder history", "*.dmh"));
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile != null) {
-            
+            NbPreferences.forModule(getClass()).put(LAST_HISTORY_EXPORT_FOLDER, selectedFile.getParentFile().getAbsolutePath());
+            loadHistoryFrom(selectedFile);
             
             
 //            Optional<DecoderConnectionFactory> connectorFactory = decoder.getConnectorFactory();
@@ -99,6 +120,23 @@ public class MessageListViewController implements Initializable, PropertyChangeL
     @FXML
     private void downloadButton(ActionEvent event){
         log.fine("downloadButton "+event);
+        
+        FileChooser fileChooser = new FileChooser();
+        
+        String lastPath = NbPreferences.forModule(getClass()).get(LAST_HISTORY_EXPORT_FOLDER, System.getProperty("user.home"));
+        if(Files.exists(Paths.get(lastPath))) {
+            File lastFolder = Paths.get(lastPath).toFile();
+            fileChooser.setInitialDirectory(lastFolder);
+        }
+        fileChooser.setInitialFileName("history.dmh");
+        fileChooser.setTitle("Save history to");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Decoder history", "*.dmh"));
+        File selectedFile = fileChooser.showSaveDialog(null);
+        if (selectedFile != null) {
+            NbPreferences.forModule(getClass()).put(LAST_HISTORY_EXPORT_FOLDER, selectedFile.getParentFile().getAbsolutePath());
+            saveHistoryTo(selectedFile);
+        }
     }
 
     
@@ -132,18 +170,18 @@ public class MessageListViewController implements Initializable, PropertyChangeL
 
     private void handleMessageRecived(DecoderMessage decoderMessage) {
         log.fine("handleMessageRecived "+decoderMessage);
-        String time = decoderMessage.getString("","");
+        String time = Instant.now().toString();
         String command = decoderMessage.getCommand().name();
         String data = decoderMessage.getJson();
-        rows.add(new DecoderMsgRowModel(time, command, data));
+        rows.add(0, new DecoderMsgRowModel(time, command, data));
     }
 
     private void handleMessageTransmitted(DecoderMessage decoderMessage) {
         log.fine("handleMessageTransmitted "+decoderMessage);
-        String time = decoderMessage.getString("","");
+        String time = Instant.now().toString();
         String command = decoderMessage.getCommand().name();
         String data = decoderMessage.getJson();
-        rows.add(new DecoderMsgRowModel(time, command, data));
+        rows.add(0, new DecoderMsgRowModel(time, command, data));
     }
 
     private void handleDecoderDisconnected(Decoder decoder) {   
@@ -153,6 +191,43 @@ public class MessageListViewController implements Initializable, PropertyChangeL
 
     private void handleDecoderConnected(Decoder decoder) {
         log.fine("handleDecoderConnected "+decoder);
+    }
+
+    private void saveHistoryTo(File selectedFile) {
+        List<DecoderMsgRowModel> rowsToSave = new ArrayList<>(rows);
+        List<String> dataToSave = rowsToSave.stream()
+                .map(row -> String.format("{time:\"%s\", type:\"%s\", data:%s},", row.getTime(), row.getType(), row.getData()))
+                .collect(Collectors.toList());
+        dataToSave.add(0, "\"message_history\":[");
+        dataToSave.add("]");
+        
+        try {
+            Files.write(selectedFile.toPath(), dataToSave, StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
+    }
+
+    private void loadHistoryFrom(File selectedFile) {
+        
+        try {
+            List<String> lines = Files.readAllLines(selectedFile.toPath(), StandardCharsets.UTF_8);
+            lines.remove(0);
+            lines.remove(lines.size()-1);
+            
+            
+            lines.forEach(row->{
+                JSONObject json = new JSONObject(row);
+                String time = json.getString("time");
+                String command = json.getString("type");
+                String data = json.getJSONObject("data").toString();
+                rows.add(0, new DecoderMsgRowModel(time, command, data));
+            });
+            
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 
 }

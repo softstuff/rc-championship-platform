@@ -14,7 +14,8 @@ import rc.championship.api.model.Decoder;
 public class DecoderMessage {
 
     private Decoder decoder;
-        
+
+    
 
     public enum Command {
         Reset, Status, Passing, Version, ResendPassings, ClearPassings, AuxiliarySettings, ServerSettings, Session, NetworkSettings, ConnectionWatchdog, FunctionUnlock, Ping, Time, GeneralSettings, Signals, LoopTrigger, GPS, FirstContact, Timeline, Error, Unknown
@@ -38,7 +39,7 @@ public class DecoderMessage {
             }
         }
     }
-
+    
     public Command getCommand() {
         return command;
     }

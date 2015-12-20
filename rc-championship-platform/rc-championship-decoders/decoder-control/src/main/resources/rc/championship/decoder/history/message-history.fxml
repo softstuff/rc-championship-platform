@@ -7,14 +7,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="752.0" prefWidth="1312.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rc.championship.decoder.history.MessageHistoryViewController">
-    <stylesheets>
-        <URL value="@message-history.css" />
-    </stylesheets>
+
+<VBox xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rc.championship.decoder.history.MessageHistoryViewController">
    <children>
-      <Accordion layoutX="8.0" layoutY="7.0">
-        <panes>
-          <TitledPane animated="false" prefHeight="83.0" prefWidth="1455.0" text="Filter">
+      <Accordion VBox.vgrow="ALWAYS">
+         <panes>
+          <TitledPane animated="false" prefHeight="96.0" prefWidth="121.0" text="Filter">
                <content>
                   <GridPane prefHeight="54.0" prefWidth="1164.0">
                     <columnConstraints>
@@ -33,18 +31,14 @@
                   </GridPane>
                </content>
             </TitledPane>
-        </panes>
+         </panes>
       </Accordion>
-      <AnchorPane layoutY="153.0" prefHeight="598.0" prefWidth="1305.0">
-         <children>
-            <TreeTableView fx:id="treeTableView" layoutX="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="598.0" prefWidth="1455.0">
-              <columns>
-                <TreeTableColumn fx:id="columnId" prefWidth="75.0" text="Id" />
-                  <TreeTableColumn fx:id="columnTime" prefWidth="75.0" text="Time" />
-                <TreeTableColumn fx:id="columnType" prefWidth="119.0" text="Type" />
-              </columns>
-            </TreeTableView>
-         </children>
-      </AnchorPane>
+      <TreeTableView fx:id="treeTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="646.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+        <columns>
+          <TreeTableColumn fx:id="columnId" editable="false" prefWidth="75.0" text="Id" />
+            <TreeTableColumn fx:id="columnTime" editable="false" prefWidth="261.0" text="Time" />
+          <TreeTableColumn fx:id="columnType" editable="false" prefWidth="339.0" text="Type" />
+        </columns>
+      </TreeTableView>
    </children>
-</AnchorPane>
+</VBox>
